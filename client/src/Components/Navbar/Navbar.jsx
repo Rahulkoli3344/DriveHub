@@ -76,6 +76,12 @@ function Navbar() {
               </li>
 
               <li>
+                <a href="/dashboard" className="hover:text-red-500 transition-all duration-300">
+                  Dashboard
+                </a>
+              </li>
+
+              <li>
                 <details>
                   <summary className="hover:text-red-500 transition-all duration-300">
                     Pages

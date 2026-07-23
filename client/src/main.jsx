@@ -13,6 +13,7 @@ import Emergency from './Pages/Emergency/Emergency.jsx'
 import HeavyLoad from './Pages/HeavyLoad/HeavyLoad.jsx'
 import LightLoad from './Pages/LightLoad/LightLoad.jsx'
 import RentalCars from './Pages/RentalCars/RentalCars.jsx'
+import Dashboard from './Pages/Dashboard/Dashboard.jsx'
 import Trip from './Pages/Trip/Trip.jsx'
 
 const router = createBrowserRouter([
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
       {
         path:"trip",
         element:<Trip />
+      },
+      {
+        path:"dashboard",
+        element:<Dashboard />
       }
     ]
   }
