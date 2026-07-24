@@ -86,19 +86,28 @@ export default function Trip() {
 
     try {
 
+      const formData = new FormData();
+
+      formData.append("vehicleName", editedTrip.vehicleName);
+      formData.append("vehicleNumber", editedTrip.vehicleNumber);
+      formData.append("category", editedTrip.category);
+      formData.append("location", editedTrip.location);
+      formData.append("ownerName", editedTrip.ownerName);
+      formData.append("ownerContact", editedTrip.ownerContact);
+      formData.append("seatingCapacity", editedTrip.seatingCapacity);
+      formData.append("acAvailable", editedTrip.acAvailable);
+
       await axios.put(
-
         `https://localhost:7041/api/Trips/${editingId}`,
-
-        editedTrip
-
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
-      setTrips((prev) =>
-        prev.map((trip) =>
-          trip.id === editingId ? editedTrip : trip
-        )
-      );
+      fetchTrips();
 
       setEditingId(null);
 

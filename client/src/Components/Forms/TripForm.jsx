@@ -16,6 +16,8 @@ const TripForm = () => {
         acAvailable: false,
     });
 
+    const [image, setImage] = useState(null);
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
@@ -29,7 +31,22 @@ const TripForm = () => {
         e.preventDefault();
 
         try {
-            await addTrip(trip);
+            const formData = new FormData();
+
+            formData.append("vehicleName", trip.vehicleName);
+            formData.append("vehicleNumber", trip.vehicleNumber);
+            formData.append("category", trip.category);
+            formData.append("location", trip.location);
+            formData.append("ownerName", trip.ownerName);
+            formData.append("ownerContact", trip.ownerContact);
+            formData.append("seatingCapacity", trip.seatingCapacity);
+            formData.append("acAvailable", trip.acAvailable);
+
+            if (image) {
+                formData.append("image", image);
+            }
+
+            await addTrip(formData);
 
             alert("Trip Added Successfully");
 
@@ -131,6 +148,27 @@ const TripForm = () => {
                     />
                     AC Available
                 </label>
+
+                <div>
+                    <label className="block mb-2 font-semibold">
+                        Vehicle Image (Optional)
+                    </label>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="file-input file-input-bordered w-full"
+                        onChange={(e) => setImage(e.target.files[0])}
+                    />
+
+                    {image && (
+                        <img
+                            src={URL.createObjectURL(image)}
+                            alt="Preview"
+                            className="w-60 h-40 object-cover rounded-lg border mt-4"
+                        />
+                    )}
+                </div>
 
                 <button
                     type="submit"

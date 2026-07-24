@@ -17,9 +17,12 @@ export default function TripCard({
             {/* Image */}
             <figure>
                 <img
-                    src={isEditing ? editedTrip.imagePath : trip.imagePath}
+                    src={`https://localhost:7041${isEditing ? editedTrip.imagePath : trip.imagePath}`}
                     alt={trip.vehicleName}
                     className="h-56 w-full object-cover"
+                    onError={(e) => {
+                        e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+                    }}
                 />
             </figure>
 
@@ -107,14 +110,20 @@ export default function TripCard({
                             </label>
                         </div>
 
-                        <label className="font-semibold mt-2">Image URL</label>
+                        <label className="font-semibold mt-2">
+                            Vehicle Image
+                        </label>
+
                         <input
-                            type="text"
-                            name="imagePath"
-                            value={editedTrip.imagePath}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
+                            type="file"
+                            accept="image/*"
+                            className="file-input file-input-bordered w-full"
+                            disabled
                         />
+
+                        <p className="text-xs text-gray-500 mt-1">
+                            Image update will be enabled in the next step.
+                        </p>
 
                         <div className="card-actions justify-end mt-6">
 
