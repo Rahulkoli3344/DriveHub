@@ -22,12 +22,14 @@ export default function Login() {
         formData
       );
 
-      // store JWT token
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("email", res.data.email);
+      localStorage.setItem("role", res.data.role);
 
       alert("Login successful 🚀");
 
-      navigate("/");
+      window.location.href = "/";;
 
     } catch (error) {
       console.log(error.response?.data || error.message);

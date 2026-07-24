@@ -1,6 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
+
+  const navigate = useNavigate();
+
+  const [userName, setUserName] = useState("Default User");
+
+  useEffect(() => {
+    const name = localStorage.getItem("name");
+
+    if (name) {
+      setUserName(name);
+    }
+  }, []);
+
+  const handleLogout = () => {
+
+    localStorage.removeItem("userId");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+
+    setUserName("Default User");
+
+    navigate("/login");
+  };
+
   return (
 
     <>
@@ -88,12 +115,12 @@ function Navbar() {
                   </summary>
                   <ul className="bg-white text-gray-800 rounded-xl shadow-xl p-2 w-52">
                     <li><a href="/emergency">Emergency</a></li>
-                      <li><a href="/construction">Construction</a></li>
-                      <li><a href="/agriculture">Agriculture</a></li>
-                      <li><a href="/heavyload">HeavyLoad</a></li>
-                      <li><a href="/lightload">LightWeight</a></li>
-                      <li><a href="/rentalcars">RentalCars</a></li>
-                      <li><a href="/trip">Trip</a></li>
+                    <li><a href="/construction">Construction</a></li>
+                    <li><a href="/agriculture">Agriculture</a></li>
+                    <li><a href="/heavyload">HeavyLoad</a></li>
+                    <li><a href="/lightload">LightWeight</a></li>
+                    <li><a href="/rentalcars">RentalCars</a></li>
+                    <li><a href="/trip">Trip</a></li>
                   </ul>
                 </details>
               </li>
@@ -109,11 +136,13 @@ function Navbar() {
           {/* Right Side */}
           <div className="navbar-end gap-3">
 
-            <a href="/login">
-              <button className="btn btn-sm bg-red-600 border-none hover:bg-red-700 text-white hidden md:flex">
-                Login
-              </button>
-            </a>
+            {userName === "Default User" && (
+              <a href="/login">
+                <button className="btn btn-sm bg-red-600 border-none hover:bg-red-700 text-white hidden md:flex">
+                  Login
+                </button>
+              </a>
+            )}
 
             <div className="dropdown dropdown-end">
               <div
@@ -134,14 +163,17 @@ function Navbar() {
                 className="menu menu-sm dropdown-content mt-3 p-2 shadow-xl bg-white text-gray-800 rounded-xl w-52"
               >
                 <li>
-                  <a className="justify-between">
-                    Profile
-                    <span className="badge badge-error text-white">New</span>
+                  <a className="font-semibold">
+                    👤 {userName}
                   </a>
                 </li>
                 <li><a>Dashboard</a></li>
                 <li><a>Settings</a></li>
-                <li><a>Logout</a></li>
+                <li>
+                  <a onClick={handleLogout}>
+                    Logout
+                  </a>
+                </li>
               </ul>
             </div>
 

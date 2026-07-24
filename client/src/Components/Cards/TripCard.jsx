@@ -11,13 +11,13 @@ export default function TripCard({
     onDelete,
 }) {
     const isEditing = editingId === trip.id;
-
+    const isAdmin = localStorage.getItem("role") === "Admin";
     return (
         <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
             {/* Image */}
             <figure>
                 <img
-                    src={`https://localhost:7041${isEditing ? editedTrip.imagePath : trip.imagePath}`}
+                    src={`https://localhost:7041${isEditing && isAdmin ? editedTrip.imagePath : trip.imagePath}`}
                     alt={trip.vehicleName}
                     className="h-56 w-full object-cover"
                     onError={(e) => {
@@ -200,23 +200,25 @@ export default function TripCard({
 
                         </div>
 
-                        <div className="flex justify-between mt-6">
+                        {isAdmin && (
+                            <div className="flex justify-between mt-6">
 
-                            <button
-                                className="btn btn-warning w-[48%]"
-                                onClick={() => onEdit(trip)}
-                            >
-                                ✏️ Update
-                            </button>
+                                <button
+                                    className="btn btn-warning w-[48%]"
+                                    onClick={() => onEdit(trip)}
+                                >
+                                    ✏️ Update
+                                </button>
 
-                            <button
-                                className="btn btn-error w-[48%]"
-                                onClick={() => onDelete(trip.id)}
-                            >
-                                🗑 Delete
-                            </button>
+                                <button
+                                    className="btn btn-error w-[48%]"
+                                    onClick={() => onDelete(trip.id)}
+                                >
+                                    🗑 Delete
+                                </button>
 
-                        </div>
+                            </div>
+                        )}
 
                     </>
                 )}
