@@ -10,6 +10,17 @@ export default function Trip() {
 
   const [editedTrip, setEditedTrip] = useState({});
 
+  const [search, setSearch] = useState("");
+
+  const filteredTrips = trips.filter((trip) => {
+    const text = search.toLowerCase();
+
+    return (
+      trip.vehicleName.toLowerCase().includes(text) ||
+      trip.location.toLowerCase().includes(text)
+    );
+  });
+
   useEffect(() => {
     fetchTrips();
   }, []);
@@ -141,8 +152,18 @@ export default function Trip() {
 
       </h1>
 
+      <div className="flex justify-center mb-6">
+        <input
+          type="text"
+          placeholder="🔍 Search by Vehicle Name or Location..."
+          className="input input-bordered w-full max-w-lg"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {trips.map((trip) => (
+        {filteredTrips.map((trip) => (
 
           <TripCard
 

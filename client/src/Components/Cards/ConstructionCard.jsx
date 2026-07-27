@@ -1,204 +1,235 @@
 import React from "react";
 
 export default function ConstructionCard({
-    construction,
-    editingId,
-    editedConstruction,
-    onChange,
-    onSave,
-    onCancel,
-    onEdit,
-    onDelete,
+  construction,
+  editingId,
+  editedConstruction,
+  onChange,
+  onSave,
+  onCancel,
+  onEdit,
+  onDelete,
 }) {
-    const isEditing = editingId === construction.id;
+  const isEditing = editingId === construction.id;
+  const isAdmin = localStorage.getItem("role") === "Admin";
 
-    return (
-        <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+  const imageUrl = (path) => {
+    if (!path) return "https://localhost:7041/uploads/default-trip.webp";
 
-            {/* Image */}
-            <figure>
-                <img
-                    src={isEditing ? editedConstruction.imagePath : construction.imagePath}
-                    alt={construction.vehicleName}
-                    className="h-56 w-full object-cover"
-                />
-            </figure>
+    if (path.startsWith("http")) return path;
 
-            <div className="card-body">
+    return `https://localhost:7041${path}`;
+  };
 
-                {isEditing ? (
-                    <>
-                        <label className="font-semibold">User Name</label>
-                        <input
-                            type="text"
-                            name="userName"
-                            value={editedConstruction.userName}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+  return (
+    <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
 
-                        <label className="font-semibold mt-2">Contact Number</label>
-                        <input
-                            type="text"
-                            name="contactNumber"
-                            value={editedConstruction.contactNumber}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+      {/* Image */}
+      <figure>
+        <img
+          src={imageUrl(
+            isEditing
+              ? editedConstruction.imagePath
+              : construction.imagePath
+          )}
+          alt={construction.vehicleName}
+          className="h-56 w-full object-cover"
+          onError={(e) => {
+            e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+          }}
+        />
+      </figure>
 
-                        <label className="font-semibold mt-2">Vehicle Name</label>
-                        <input
-                            type="text"
-                            name="vehicleName"
-                            value={editedConstruction.vehicleName}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+      <div className="card-body">
 
-                        <label className="font-semibold mt-2">Vehicle Number</label>
-                        <input
-                            type="text"
-                            name="vehicleNumber"
-                            value={editedConstruction.vehicleNumber}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+        {/* ================= EDIT MODE ================= */}
 
-                        <label className="font-semibold mt-2">Work Type</label>
-                        <input
-                            type="text"
-                            name="workType"
-                            value={editedConstruction.workType}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+        {isEditing ? (
+          <>
+            <label className="font-semibold">User Name</label>
+            <input
+              type="text"
+              name="userName"
+              value={editedConstruction.userName}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
 
-                        <label className="font-semibold mt-2">Location</label>
-                        <input
-                            type="text"
-                            name="location"
-                            value={editedConstruction.location}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+            <label className="font-semibold mt-2">Contact Number</label>
+            <input
+              type="text"
+              name="contactNumber"
+              value={editedConstruction.contactNumber}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
 
-                        <label className="font-semibold mt-2">Description</label>
-                        <textarea
-                            name="description"
-                            value={editedConstruction.description}
-                            onChange={onChange}
-                            className="textarea textarea-bordered w-full"
-                        />
+            <label className="font-semibold mt-2">Vehicle Name</label>
+            <input
+              type="text"
+              name="vehicleName"
+              value={editedConstruction.vehicleName}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
 
-                        <label className="font-semibold mt-2">Status</label>
-                        <select
-                            name="status"
-                            value={editedConstruction.status}
-                            onChange={onChange}
-                            className="select select-bordered w-full"
-                        >
-                            <option value="Available">Available</option>
-                            <option value="Busy">Busy</option>
-                            <option value="Maintenance">Maintenance</option>
-                        </select>
+            <label className="font-semibold mt-2">Vehicle Number</label>
+            <input
+              type="text"
+              name="vehicleNumber"
+              value={editedConstruction.vehicleNumber}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
 
-                        <label className="font-semibold mt-2">Image URL</label>
-                        <input
-                            type="text"
-                            name="imagePath"
-                            value={editedConstruction.imagePath}
-                            onChange={onChange}
-                            className="input input-bordered w-full"
-                        />
+            <label className="font-semibold mt-2">Work Type</label>
+            <input
+              type="text"
+              name="workType"
+              value={editedConstruction.workType}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
 
-                        <div className="card-actions justify-end mt-6">
-                            <button
-                                className="btn btn-success"
-                                onClick={onSave}
-                            >
-                                Save
-                            </button>
+            <label className="font-semibold mt-2">Location</label>
+            <input
+              type="text"
+              name="location"
+              value={editedConstruction.location}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
 
-                            <button
-                                className="btn btn-outline"
-                                onClick={onCancel}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-2xl font-bold text-yellow-600">
-                                🚧 Construction
-                            </h2>
+            <label className="font-semibold mt-2">Description</label>
+            <textarea
+              name="description"
+              value={editedConstruction.description}
+              onChange={onChange}
+              className="textarea textarea-bordered w-full"
+            />
 
-                            <div className="badge badge-warning badge-lg">
-                                {construction.status}
-                            </div>
-                        </div>
+            <label className="font-semibold mt-2">Status</label>
+            <select
+              name="status"
+              value={editedConstruction.status}
+              onChange={onChange}
+              className="select select-bordered w-full"
+            >
+              <option value="Available">Available</option>
+              <option value="Busy">Busy</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
 
-                        <div className="space-y-3 mt-4 text-[16px]">
+            <label className="font-semibold mt-2">
+              Vehicle Image
+            </label>
 
-                            <p>
-                                <strong>👤 User :</strong>{" "}
-                                {construction.userName}
-                            </p>
+            <input
+              type="file"
+              accept="image/*"
+              className="file-input file-input-bordered w-full"
+              disabled
+            />
 
-                            <p>
-                                <strong>📞 Contact :</strong>{" "}
-                                {construction.contactNumber}
-                            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Image update will be enabled in the next step.
+            </p>
 
-                            <p>
-                                <strong>🚜 Vehicle :</strong>{" "}
-                                {construction.vehicleName}
-                            </p>
+            <div className="card-actions justify-end mt-6">
+              <button
+                className="btn btn-success"
+                onClick={onSave}
+              >
+                Save
+              </button>
 
-                            <p>
-                                <strong>🔢 Number :</strong>{" "}
-                                {construction.vehicleNumber}
-                            </p>
+              <button
+                className="btn btn-outline"
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* ================= VIEW MODE ================= */}
 
-                            <p>
-                                <strong>🏗 Work :</strong>{" "}
-                                {construction.workType}
-                            </p>
+            <div className="flex justify-between items-center">
 
-                            <p>
-                                <strong>📍 Location :</strong>{" "}
-                                {construction.location}
-                            </p>
+              <h2 className="text-2xl font-bold text-yellow-600">
+                🚧 Construction
+              </h2>
 
-                            <p>
-                                <strong>📝 Description :</strong>{" "}
-                                {construction.description}
-                            </p>
-
-                        </div>
-
-                        <div className="flex justify-between mt-6">
-
-                            <button
-                                className="btn btn-warning w-[48%]"
-                                onClick={() => onEdit(construction)}
-                            >
-                                ✏️ Update
-                            </button>
-
-                            <button
-                                className="btn btn-error w-[48%]"
-                                onClick={() => onDelete(construction.id)}
-                            >
-                                🗑 Delete
-                            </button>
-
-                        </div>
-                    </>
-                )}
+              <div className="badge badge-warning badge-lg">
+                {construction.status}
+              </div>
 
             </div>
-        </div>
-    );
+
+            <div className="space-y-3 mt-4 text-[16px]">
+
+              <p>
+                👤 <span className="font-semibold">User :</span>{" "}
+                {construction.userName}
+              </p>
+
+              <p>
+                📞 <span className="font-semibold">Contact :</span>{" "}
+                {construction.contactNumber}
+              </p>
+
+              <p>
+                🚜 <span className="font-semibold">Vehicle :</span>{" "}
+                {construction.vehicleName}
+              </p>
+
+              <p>
+                🔢 <span className="font-semibold">Number :</span>{" "}
+                {construction.vehicleNumber}
+              </p>
+
+              <p>
+                🏗 <span className="font-semibold">Work :</span>{" "}
+                {construction.workType}
+              </p>
+
+              <p>
+                📍 <span className="font-semibold">Location :</span>{" "}
+                {construction.location}
+              </p>
+
+              <p>
+                📝 <span className="font-semibold">Description :</span>{" "}
+                {construction.description}
+              </p>
+
+            </div>
+
+            {isAdmin && (
+              <div className="flex justify-between mt-6">
+
+                <button
+                  className="btn btn-warning w-[48%]"
+                  onClick={() => onEdit(construction)}
+                >
+                  ✏️ Update
+                </button>
+
+                <button
+                  className="btn btn-error w-[48%]"
+                  onClick={() => onDelete(construction.id)}
+                >
+                  🗑 Delete
+                </button>
+
+              </div>
+            )}
+
+          </>
+        )}
+
+      </div>
+    </div>
+  );
 }

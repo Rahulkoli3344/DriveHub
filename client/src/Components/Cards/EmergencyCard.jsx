@@ -10,7 +10,9 @@ export default function EmergencyCard({
   onEdit,
   onDelete,
 }) {
+
   const isEditing = editingId === emergency.id;
+  const isAdmin = localStorage.getItem("role") === "Admin";
 
   const imageUrl = (path) => {
     if (!path) return "https://via.placeholder.com/400x250";
@@ -30,6 +32,9 @@ export default function EmergencyCard({
           )}
           alt={emergency.vehicleName}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+          }}
         />
       </figure>
 
@@ -103,7 +108,6 @@ export default function EmergencyCard({
         ) : (
           <>
             <div className="flex justify-between items-center">
-
               <h2 className="card-title text-red-500 text-xl">
                 🚑 Emergency
               </h2>
@@ -111,56 +115,46 @@ export default function EmergencyCard({
               <div className="badge badge-error">
                 {emergency.availability}
               </div>
-
             </div>
 
             <div className="mt-4 space-y-2 text-sm">
 
-              <p>
-                <strong>👨 Driver:</strong> {emergency.driverName}
-              </p>
+              <p><strong>👨 Driver:</strong> {emergency.driverName}</p>
 
-              <p>
-                <strong>📞 Contact:</strong> {emergency.driverContact}
-              </p>
+              <p><strong>📞 Contact:</strong> {emergency.driverContact}</p>
 
-              <p>
-                <strong>🚑 Vehicle:</strong> {emergency.vehicleName}
-              </p>
+              <p><strong>🚑 Vehicle:</strong> {emergency.vehicleName}</p>
 
-              <p>
-                <strong>🔢 Number:</strong> {emergency.vehicleNumber}
-              </p>
+              <p><strong>🔢 Number:</strong> {emergency.vehicleNumber}</p>
 
-              <p>
-                <strong>⚠ Type:</strong> {emergency.vehicleType}
-              </p>
+              <p><strong>⚠ Type:</strong> {emergency.vehicleType}</p>
 
-              <p>
-                <strong>📍 Location:</strong> {emergency.location}
-              </p>
+              <p><strong>📍 Location:</strong> {emergency.location}</p>
 
             </div>
 
-            <div className="mt-auto flex gap-3 pt-6">
+            {isAdmin && (
+              <div className="flex justify-between mt-6">
 
-              <button
-                className="btn btn-warning flex-1"
-                onClick={() => onEdit(emergency)}
-              >
-                ✏ Update
-              </button>
+                <button
+                  className="btn btn-warning w-[48%]"
+                  onClick={() => onEdit(emergency)}
+                >
+                  ✏️ Update
+                </button>
 
-              <button
-                className="btn btn-error flex-1"
-                onClick={() => onDelete(emergency.id)}
-              >
-                🗑 Delete
-              </button>
+                <button
+                  className="btn btn-error w-[48%]"
+                  onClick={() => onDelete(emergency.id)}
+                >
+                  🗑 Delete
+                </button>
 
-            </div>
+              </div>
+            )}
           </>
         )}
+
       </div>
     </div>
   );

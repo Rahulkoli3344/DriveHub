@@ -28,6 +28,16 @@ function Navbar() {
     navigate("/login");
   };
 
+  const handleDashboard = () => {
+    const role = localStorage.getItem("role");
+
+    if (role === "Admin") {
+      navigate("/dashboard");
+    } else {
+      alert("❌ Access Denied!\n\nOnly Admin can access the Dashboard.");
+    }
+  };
+
   return (
 
     <>
@@ -103,7 +113,7 @@ function Navbar() {
               </li>
 
               <li>
-                <a href="/dashboard" className="hover:text-red-500 transition-all duration-300">
+                <a onClick={handleDashboard} className="hover:text-red-500 transition-all duration-300">
                   Dashboard
                 </a>
               </li>

@@ -11,6 +11,15 @@ export default function AgricultureCard({
   onDelete,
 }) {
   const isEditing = editingId === agriculture.id;
+  const isAdmin = localStorage.getItem("role") === "Admin";
+
+  const imageUrl = (path) => {
+    if (!path) return "https://localhost:7041/uploads/default-trip.webp";
+
+    if (path.startsWith("http")) return path;
+
+    return `https://localhost:7041${path}`;
+  };
 
   return (
     <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
@@ -18,13 +27,20 @@ export default function AgricultureCard({
       {/* Image */}
       <figure>
         <img
-          src={isEditing ? editedAgriculture.imagePath : agriculture.imagePath}
+          src={imageUrl(
+            isEditing ? editedAgriculture.imagePath : agriculture.imagePath
+          )}
           alt={agriculture.vehicleName}
           className="h-56 w-full object-cover"
+          onError={(e) => {
+            e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+          }}
         />
       </figure>
 
       <div className="card-body">
+
+        {/* ================= EDIT MODE ================= */}
 
         {isEditing ? (
           <>
@@ -102,16 +118,23 @@ export default function AgricultureCard({
               <option>Maintenance</option>
             </select>
 
-            <label className="font-semibold mt-2">Image Path</label>
+            <label className="font-semibold mt-2">
+              Vehicle Image
+            </label>
+
             <input
-              type="text"
-              name="imagePath"
-              value={editedAgriculture.imagePath}
-              onChange={onChange}
-              className="input input-bordered w-full"
+              type="file"
+              accept="image/*"
+              className="file-input file-input-bordered w-full"
+              disabled
             />
 
+            <p className="text-xs text-gray-500 mt-1">
+              Image update will be enabled in the next step.
+            </p>
+
             <div className="card-actions justify-end mt-6">
+
               <button
                 className="btn btn-success"
                 onClick={onSave}
@@ -125,10 +148,13 @@ export default function AgricultureCard({
               >
                 Cancel
               </button>
+
             </div>
           </>
         ) : (
           <>
+            {/* ================= VIEW MODE ================= */}
+
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-success">
                 {agriculture.vehicleName}
@@ -182,23 +208,25 @@ export default function AgricultureCard({
 
             </div>
 
-            <div className="flex justify-between mt-6">
+            {isAdmin && (
+              <div className="flex justify-between mt-6">
 
-              <button
-                className="btn btn-warning w-[48%]"
-                onClick={() => onEdit(agriculture)}
-              >
-                ✏️ Update
-              </button>
+                <button
+                  className="btn btn-warning w-[48%]"
+                  onClick={() => onEdit(agriculture)}
+                >
+                  ✏️ Update
+                </button>
 
-              <button
-                className="btn btn-error w-[48%]"
-                onClick={() => onDelete(agriculture.id)}
-              >
-                🗑 Delete
-              </button>
+                <button
+                  className="btn btn-error w-[48%]"
+                  onClick={() => onDelete(agriculture.id)}
+                >
+                  🗑 Delete
+                </button>
 
-            </div>
+              </div>
+            )}
           </>
         )}
 

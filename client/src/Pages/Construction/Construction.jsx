@@ -10,6 +10,18 @@ export default function Construction() {
 
   const [editedConstruction, setEditedConstruction] = useState({});
 
+  const [search, setSearch] = useState("");
+
+  const filteredConstruction = construction.filter((item) => {
+    const text = search.toLowerCase();
+
+    return (
+      item.vehicleName.toLowerCase().includes(text) ||
+      item.location.toLowerCase().includes(text)
+    );
+  });
+  
+
   useEffect(() => {
     fetchConstruction();
   }, []);
@@ -134,9 +146,19 @@ export default function Construction() {
         Construction Vehicles
       </h1>
 
+      <div className="flex justify-center mb-6">
+        <input
+          type="text"
+          placeholder="🔍 Search by Vehicle Name or Location..."
+          className="input input-bordered w-full max-w-lg"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-        {construction.map((item) => (
+        {filteredConstruction.map((item) => (
 
           <ConstructionCard
             key={item.id}
