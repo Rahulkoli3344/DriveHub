@@ -1,5 +1,7 @@
 import TripForm from "../../Components/Forms/TripForm";
-
+import EmergencyForm from "../../Components/Forms/EmergencyForm";
+import ConstructionForm from "../../Components/Forms/ConstructionForm";
+import AgricultureForm from "../../Components/Forms/AgricultureForm";
 const Dashboard = () => {
 
     return (
@@ -10,6 +12,9 @@ const Dashboard = () => {
             </h1>
 
             <TripForm />
+            <EmergencyForm />
+            <ConstructionForm />
+            <AgricultureForm />
 
         </div>
     );
