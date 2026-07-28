@@ -33,3 +33,6 @@ export const getEmergencyById = async (id) => {
 export const deleteAllEmergency = async () => {
     return await axios.delete(`${API}/DeleteAll`);
 };
+
+export const getUserEmergency = (userId) =>
+    axios.get(`${API}/user/${userId}`);

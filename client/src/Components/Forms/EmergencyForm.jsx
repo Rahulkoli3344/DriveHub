@@ -31,7 +31,8 @@ const EmergencyForm = () => {
 
         try {
             const formData = new FormData();
-
+            
+            formData.append("userId", localStorage.getItem("userId"));
             formData.append("vehicleName", emergency.vehicleName);
             formData.append("vehicleNumber", emergency.vehicleNumber);
             formData.append("vehicleType", emergency.vehicleType);

@@ -9,10 +9,10 @@ export default function EmergencyCard({
   onCancel,
   onEdit,
   onDelete,
+  showActions = false,
 }) {
 
   const isEditing = editingId === emergency.id;
-  const isAdmin = localStorage.getItem("role") === "Admin";
 
   const imageUrl = (path) => {
     if (!path) return "https://via.placeholder.com/400x250";
@@ -133,7 +133,7 @@ export default function EmergencyCard({
 
             </div>
 
-            {isAdmin && (
+            {showActions  && (
               <div className="flex justify-between mt-6">
 
                 <button

@@ -39,3 +39,6 @@ export const getConstructionById = async (id) => {
 export const deleteAllConstruction = async () => {
     return await axios.delete(`${API}/DeleteAll`);
 };
+
+export const getUserConstruction = (userId) =>
+    axios.get(`${API}/user/${userId}`);

@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ConstructionCard from "../../Components/Cards/ConstructionCard";
 
-export default function Construction() {
+export default function Construction({
+  onlyCurrentUser = false,
+  showHeading = true,
+  showSearch=true,
 
+}) {
   const [construction, setConstruction] = useState([]);
-
   const [editingId, setEditingId] = useState(null);
-
   const [editedConstruction, setEditedConstruction] = useState({});
-
   const [search, setSearch] = useState("");
+
+  const userId = localStorage.getItem("userId");
+  const isAdmin = localStorage.getItem("role") === "Admin";
 
   const filteredConstruction = construction.filter((item) => {
     const text = search.toLowerCase();
@@ -20,7 +24,6 @@ export default function Construction() {
       item.location.toLowerCase().includes(text)
     );
   });
-  
 
   useEffect(() => {
     fetchConstruction();
@@ -28,20 +31,25 @@ export default function Construction() {
 
   const fetchConstruction = async () => {
     try {
+      let response;
 
-      const response = await axios.get(
-        "https://localhost:7041/api/Construction"
-      );
+      if (onlyCurrentUser) {
+        response = await axios.get(
+          `https://localhost:7041/api/Construction/user/${userId}`
+        );
+      } else {
+        response = await axios.get(
+          "https://localhost:7041/api/Construction"
+        );
+      }
 
       setConstruction(response.data);
-
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleDelete = async (id) => {
-
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this construction vehicle?"
     );
@@ -49,7 +57,6 @@ export default function Construction() {
     if (!confirmDelete) return;
 
     try {
-
       await axios.delete(
         `https://localhost:7041/api/Construction/${id}`
       );
@@ -59,40 +66,28 @@ export default function Construction() {
       );
 
       alert("Construction Vehicle Deleted Successfully");
-
     } catch (error) {
-
       console.error(error);
-
       alert("Delete Failed");
-
     }
-
   };
 
   const handleUpdate = (item) => {
-
     setEditingId(item.id);
-
     setEditedConstruction({ ...item });
-
   };
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
 
     setEditedConstruction((prev) => ({
       ...prev,
       [name]: value,
     }));
-
   };
 
   const handleSave = async () => {
-
     try {
-
       const formData = new FormData();
 
       formData.append("vehicleName", editedConstruction.vehicleName);
@@ -119,33 +114,27 @@ export default function Construction() {
       setEditingId(null);
 
       alert("Construction Vehicle Updated Successfully");
-
     } catch (error) {
-
       console.error(error);
-
       alert("Update Failed");
-
     }
-
   };
 
   const handleCancel = () => {
-
     setEditingId(null);
-
     setEditedConstruction({});
-
   };
 
   return (
-
     <div className="container mx-auto px-6 py-8">
 
-      <h1 className="text-4xl font-bold text-center mb-10">
-        Construction Vehicles
-      </h1>
+      {showHeading && (
+        <h1 className="text-4xl font-bold text-center mb-10">
+          Construction Vehicles
+        </h1>
+      )}
 
+      {showSearch && (
       <div className="flex justify-center mb-6">
         <input
           type="text"
@@ -155,11 +144,10 @@ export default function Construction() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
         {filteredConstruction.map((item) => (
-
           <ConstructionCard
             key={item.id}
             construction={item}
@@ -170,14 +158,10 @@ export default function Construction() {
             onCancel={handleCancel}
             onEdit={handleUpdate}
             onDelete={handleDelete}
+            showActions={onlyCurrentUser || isAdmin}
           />
-
         ))}
-
       </div>
-
     </div>
-
   );
-
 }

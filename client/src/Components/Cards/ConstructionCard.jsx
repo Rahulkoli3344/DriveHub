@@ -9,9 +9,9 @@ export default function ConstructionCard({
   onCancel,
   onEdit,
   onDelete,
+  showActions = false,
 }) {
   const isEditing = editingId === construction.id;
-  const isAdmin = localStorage.getItem("role") === "Admin";
 
   const imageUrl = (path) => {
     if (!path) return "https://localhost:7041/uploads/default-trip.webp";
@@ -206,7 +206,7 @@ export default function ConstructionCard({
 
             </div>
 
-            {isAdmin && (
+            {showActions  && (
               <div className="flex justify-between mt-6">
 
                 <button

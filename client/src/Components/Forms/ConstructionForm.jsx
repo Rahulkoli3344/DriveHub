@@ -33,6 +33,7 @@ const ConstructionForm = () => {
     try {
       const formData = new FormData();
 
+      formData.append("userId", localStorage.getItem("userId"));
       formData.append("vehicleName", construction.vehicleName);
       formData.append("vehicleNumber", construction.vehicleNumber);
       formData.append("workType", construction.workType);

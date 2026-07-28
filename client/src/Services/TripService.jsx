@@ -6,6 +6,8 @@
         return await axios.get(API);
     };
 
+    
+
     export const addTrip = async (formData) => {
         return await axios.post(API, formData, {
             headers: {
@@ -29,3 +31,6 @@
     export const getTripById = async (id) => {
         return await axios.get(`${API}/${id}`);
     };
+
+    export const getUserTrips = (userId) =>
+    axios.get(`${API}/user/${userId}`);

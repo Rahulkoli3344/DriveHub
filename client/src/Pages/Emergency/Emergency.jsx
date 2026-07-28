@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import EmergencyCard from "../../Components/Cards/EmergencyCard";
 
-export default function Emergency() {
+export default function Emergency({
+  onlyCurrentUser = false,
+  showHeading = true,
+  showSearch=true,
+
+}) {
 
   const [emergency, setEmergency] = useState([]);
-
   const [editingId, setEditingId] = useState(null);
-
   const [editedEmergency, setEditedEmergency] = useState({});
-
   const [search, setSearch] = useState("");
-  
 
+  const userId = localStorage.getItem("userId");
+  const isAdmin = localStorage.getItem("role") === "Admin";
 
   const filteredEmergency = emergency.filter((item) => {
     const text = search.toLowerCase();
@@ -30,9 +33,17 @@ export default function Emergency() {
   const fetchEmergency = async () => {
     try {
 
-      const response = await axios.get(
-        "https://localhost:7041/api/Emergency"
-      );
+      let response;
+
+      if (onlyCurrentUser) {
+        response = await axios.get(
+          `https://localhost:7041/api/Emergency/user/${userId}`
+        );
+      } else {
+        response = await axios.get(
+          "https://localhost:7041/api/Emergency"
+        );
+      }
 
       setEmergency(response.data);
 
@@ -64,7 +75,6 @@ export default function Emergency() {
     } catch (error) {
 
       console.error(error);
-
       alert("Delete Failed");
 
     }
@@ -74,7 +84,6 @@ export default function Emergency() {
   const handleUpdate = (item) => {
 
     setEditingId(item.id);
-
     setEditedEmergency({ ...item });
 
   };
@@ -127,7 +136,6 @@ export default function Emergency() {
     } catch (error) {
 
       console.error(error);
-
       alert("Update Failed");
 
     }
@@ -137,7 +145,6 @@ export default function Emergency() {
   const handleCancel = () => {
 
     setEditingId(null);
-
     setEditedEmergency({});
 
   };
@@ -146,12 +153,13 @@ export default function Emergency() {
 
     <div className="container mx-auto px-6 py-8">
 
-      <h1 className="text-4xl font-bold text-center mb-10 text-red-600">
+      {showHeading && (
+        <h1 className="text-4xl font-bold text-center mb-10 text-red-600">
+          🚑 Emergency Vehicles
+        </h1>
+      )}
 
-        🚑 Emergency Vehicles
-
-      </h1>
-
+      {showSearch && (
       <div className="flex justify-center mb-6">
         <input
           type="text"
@@ -161,31 +169,23 @@ export default function Emergency() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
         {filteredEmergency.map((item) => (
 
           <EmergencyCard
-
             key={item.id}
-
             emergency={item}
-
             editingId={editingId}
-
             editedEmergency={editedEmergency}
-
             onChange={handleChange}
-
             onSave={handleSave}
-
             onCancel={handleCancel}
-
             onEdit={handleUpdate}
-
             onDelete={handleDelete}
-
+            showActions={onlyCurrentUser || isAdmin}
           />
 
         ))}

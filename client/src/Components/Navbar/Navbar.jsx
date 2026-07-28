@@ -29,12 +29,12 @@ function Navbar() {
   };
 
   const handleDashboard = () => {
-    const role = localStorage.getItem("role");
+    const userId = localStorage.getItem("userId");
 
-    if (role === "Admin") {
+    if (userId) {
       navigate("/dashboard");
     } else {
-      alert("❌ Access Denied!\n\nOnly Admin can access the Dashboard.");
+      alert("❌ Please login first to access Dashboard.");
     }
   };
 
@@ -178,7 +178,7 @@ function Navbar() {
                   </a>
                 </li>
                 <li><a>Dashboard</a></li>
-                <li><a>Settings</a></li>
+                <li><a href="/your-vehicles">Your Vehicles</a></li>
                 <li>
                   <a onClick={handleLogout}>
                     Logout

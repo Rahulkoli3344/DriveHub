@@ -32,7 +32,7 @@ const TripForm = () => {
 
         try {
             const formData = new FormData();
-
+            formData.append("userId", localStorage.getItem("userId"));
             formData.append("vehicleName", trip.vehicleName);
             formData.append("vehicleNumber", trip.vehicleNumber);
             formData.append("category", trip.category);

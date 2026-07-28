@@ -15,6 +15,7 @@ import LightLoad from './Pages/LightLoad/LightLoad.jsx'
 import RentalCars from './Pages/RentalCars/RentalCars.jsx'
 import Dashboard from './Pages/Dashboard/Dashboard.jsx'
 import Trip from './Pages/Trip/Trip.jsx'
+import YourVehicles from './Components/YourVehicles/YourVehicles.jsx'
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
       {
         path:"dashboard",
         element:<Dashboard />
+      },
+      {
+        path:"your-vehicles",
+        element:<YourVehicles />
       }
     ]
   }
