@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addEmergency } from "../../Services/EmergencyService";
+import Swal from "sweetalert2";
 
 const EmergencyForm = () => {
     const navigate = useNavigate();
@@ -13,6 +14,9 @@ const EmergencyForm = () => {
         driverContact: "",
         location: "",
         availability: "Available",
+
+        paymentMethod: "UPI",
+        paymentStatus: "Pending",
     });
 
     const [image, setImage] = useState(null);
@@ -31,7 +35,7 @@ const EmergencyForm = () => {
 
         try {
             const formData = new FormData();
-            
+
             formData.append("userId", localStorage.getItem("userId"));
             formData.append("vehicleName", emergency.vehicleName);
             formData.append("vehicleNumber", emergency.vehicleNumber);
@@ -41,18 +45,49 @@ const EmergencyForm = () => {
             formData.append("location", emergency.location);
             formData.append("availability", emergency.availability);
 
+            formData.append("paymentMethod", emergency.paymentMethod);
+            formData.append("paymentStatus", "Success");
+
             if (image) {
                 formData.append("image", image);
             }
 
+            const transactionId = "DRVHUB-" + Date.now();
+            formData.set("transactionId", transactionId);
+
+
+            Swal.fire({
+                title: "Processing Payment...",
+                text: "Please wait",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
             await addEmergency(formData);
 
-            alert("Emergency Vehicle Added Successfully");
+            await Swal.fire({
+                icon: "success",
+                title: "Payment Successful",
+                html: `
+                <b>Amount:</b> ₹0 (Free Launch)<br><br>
+                <b>Transaction ID:</b><br>${transactionId}<br><br>
+                <b>Your vehicle has been added successfully.</b>
+              `,
+                confirmButtonText: "Continue",
+            });
 
             navigate("/emergency");
         } catch (error) {
             console.error(error);
-            alert("Failed to Add Emergency Vehicle");
+            Swal.fire({
+                icon: "error",
+                title: "Failed",
+                text: "Unable to add emergency vehicle. Please try again.",
+            });
         }
     };
 
@@ -158,11 +193,66 @@ const EmergencyForm = () => {
                     )}
                 </div>
 
+                {/* Payment Section */}
+                <div className="mt-8 border rounded-xl p-5 bg-gray-50 shadow">
+                    <h2 className="text-xl font-semibold mb-4">Payment</h2>
+
+                    <div className="mb-3">
+                        <label className="font-medium">Amount</label>
+                        <input
+                            type="text"
+                            value="₹0 (Free Launch)"
+                            readOnly
+                            className="w-full border rounded-lg p-2 mt-1 bg-gray-100"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="font-medium block mb-2">
+                            Select Payment Method
+                        </label>
+
+                        <div className="flex gap-6">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="UPI"
+                                    checked={emergency.paymentMethod === "UPI"}
+                                    onChange={handleChange}
+                                />
+                                UPI
+                            </label>
+
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="Card"
+                                    checked={emergency.paymentMethod === "Card"}
+                                    onChange={handleChange}
+                                />
+                                Card
+                            </label>
+
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="Net Banking"
+                                    checked={emergency.paymentMethod === "Net Banking"} onChange={handleChange}
+                                />
+                                Net Banking
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <button
                     type="submit"
                     className="btn btn-error w-full"
                 >
-                    Add Emergency Vehicle
+                    Proceed to Payment
                 </button>
             </form>
         </div>

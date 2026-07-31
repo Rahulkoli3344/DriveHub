@@ -1,4 +1,13 @@
 import React from "react";
+import {
+    HiOutlineMapPin,
+    HiOutlineTruck,
+    HiOutlineUser,
+    HiOutlineUserGroup,
+    HiOutlineClipboardDocument,
+    HiOutlinePencilSquare,
+    HiOutlineTrash,
+} from "react-icons/hi2";
 
 export default function TripCard({
     trip,
@@ -13,21 +22,29 @@ export default function TripCard({
 }) {
     const isEditing = editingId === trip.id;
 
+    const copyNumber = async (number) => {
+        try {
+            await navigator.clipboard.writeText(number);
+            alert("📋 Phone number copied successfully!");
+        } catch (err) {
+            alert("❌ Failed to copy phone number.");
+        }
+    };
+
     return (
-        <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 duration-300">
             {/* Image */}
             <figure>
                 <img
-                    src={`https://localhost:7041${isEditing  ? editedTrip.imagePath : trip.imagePath}`}
+                    src={`https://localhost:7041${isEditing ? editedTrip.imagePath : trip.imagePath}`}
                     alt={trip.vehicleName}
-                    className="h-56 w-full object-cover"
-                    onError={(e) => {
+                    className="h-60 w-full object-cover" onError={(e) => {
                         e.target.src = "https://localhost:7041/uploads/default-trip.webp";
                     }}
                 />
             </figure>
 
-            <div className="card-body">
+            <div className="card-body p-6">
 
                 {/* ================= EDIT MODE ================= */}
 
@@ -151,71 +168,82 @@ export default function TripCard({
 
                         <div className="flex justify-between items-center">
 
-                            <h2 className="text-2xl font-bold text-primary">
+                            <h2 className="text-xl font-bold text-gray-900 tracking-tight">
                                 {trip.vehicleName}
                             </h2>
 
-                            <div className="badge badge-primary badge-lg">
+                            <span className="px-3 py-1 rounded-full bg-emerald-50 text-black border border-emerald-100 text-sm font-semibold">
                                 {trip.category}
+                            </span>
+
+                        </div>
+
+                        <div className="space-y-2 mt-5">
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
+                                {trip.location}
+                            </p>
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineTruck className="w-5 h-5 text-gray-400" />
+                                {trip.vehicleNumber}
+                            </p>
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineUser className="w-5 h-5 text-gray-400" />
+                                {trip.ownerName}
+                            </p>
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineUserGroup className="w-5 h-5 text-gray-400" />
+                                {trip.seatingCapacity} Seats
+                            </p>
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                ❄ {trip.acAvailable ? "AC Available" : "Non AC"}
+                            </p>
+
+                            <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                                <p className="text-sm text-gray-500">
+                                    Owner Contact
+                                </p>
+
+                                <p className="text-lg font-bold text-gray-800">
+                                    {trip.ownerContact}
+                                </p>
+
                             </div>
 
                         </div>
 
-                        <div className="space-y-3 mt-4 text-[16px]">
+                        <button
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-xl font-semibold py-3 transition-all duration-300"
+                        >
+                            <HiOutlineClipboardDocument className="w-5 h-5" />
+                            <span>Copy Number</span>
+                        </button>
 
-                            <p>
-                                🚗 <span className="font-semibold">Vehicle :</span>
-                                {" "}
-                                {trip.vehicleNumber}
-                            </p>
 
-                            <p>
-                                📍 <span className="font-semibold">Location :</span>
-                                {" "}
-                                {trip.location}
-                            </p>
 
-                            <p>
-                                👤 <span className="font-semibold">Owner :</span>
-                                {" "}
-                                {trip.ownerName}
-                            </p>
-
-                            <p>
-                                📞 <span className="font-semibold">Contact :</span>
-                                {" "}
-                                {trip.ownerContact}
-                            </p>
-
-                            <p>
-                                👥 <span className="font-semibold">Seats :</span>
-                                {" "}
-                                {trip.seatingCapacity}
-                            </p>
-
-                            <p>
-                                ❄️ <span className="font-semibold">AC :</span>
-                                {" "}
-                                {trip.acAvailable ? "Available" : "Not Available"}
-                            </p>
-
-                        </div>
-
-                        {showActions  && (
+                        {showActions && (
                             <div className="flex justify-between mt-6">
 
                                 <button
-                                    className="btn btn-warning w-[48%]"
+                                    className="w-[48%] flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium py-3 transition-all duration-300"
                                     onClick={() => onEdit(trip)}
                                 >
-                                    ✏️ Update
+                                    <HiOutlinePencilSquare className="w-5 h-5" />
+                                    <span>Update</span>
                                 </button>
 
                                 <button
-                                    className="btn btn-error w-[48%]"
+                                    className="w-[48%] flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-xl font-medium py-3 transition-all duration-300"
                                     onClick={() => onDelete(trip.id)}
                                 >
-                                    🗑 Delete
+                                    <HiOutlineTrash className="w-5 h-5" />
+                                    <span>Delete</span>
                                 </button>
 
                             </div>

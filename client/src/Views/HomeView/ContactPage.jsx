@@ -24,7 +24,9 @@ export default function ContactPage() {
               Send us a message and our team will respond as soon as possible.
             </p>
 
-            <form className="space-y-5">
+            <form action={"https://formspree.io/f/mnqebbdo"} method="POST" onSubmit={(e) => {
+              setTimeout(() => e.target.reset(), 100);
+            }} className="space-y-5">
 
               <div>
                 <label className="label">
@@ -32,6 +34,7 @@ export default function ContactPage() {
                 </label>
                 <input
                   type="text"
+                  name="name"
                   placeholder="Enter your name"
                   className="input input-bordered w-full"
                 />
@@ -43,6 +46,7 @@ export default function ContactPage() {
                 </label>
                 <input
                   type="email"
+                  name="email"
                   placeholder="Enter your email"
                   className="input input-bordered w-full"
                 />
@@ -54,6 +58,7 @@ export default function ContactPage() {
                 </label>
                 <input
                   type="text"
+                  name="subject"
                   placeholder="Subject"
                   className="input input-bordered w-full"
                 />
@@ -65,6 +70,7 @@ export default function ContactPage() {
                 </label>
                 <textarea
                   rows="5"
+                  name="message"
                   placeholder="Write your message..."
                   className="textarea textarea-bordered w-full"
                 ></textarea>

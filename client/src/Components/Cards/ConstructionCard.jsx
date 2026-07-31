@@ -1,4 +1,13 @@
 import React from "react";
+import {
+  HiOutlineMapPin,
+  HiOutlineTruck,
+  HiOutlineUser,
+  HiOutlineClipboardDocument,
+  HiOutlinePencilSquare,
+  HiOutlineTrash,
+  HiOutlineWrenchScrewdriver,
+} from "react-icons/hi2";
 
 export default function ConstructionCard({
   construction,
@@ -21,9 +30,17 @@ export default function ConstructionCard({
     return `https://localhost:7041${path}`;
   };
 
-  return (
-    <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+  const copyNumber = async (number) => {
+    try {
+      await navigator.clipboard.writeText(number);
+      alert("📋 Phone number copied successfully!");
+    } catch {
+      alert("❌ Failed to copy phone number.");
+    }
+  };
 
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
       {/* Image */}
       <figure>
         <img
@@ -33,14 +50,13 @@ export default function ConstructionCard({
               : construction.imagePath
           )}
           alt={construction.vehicleName}
-          className="h-56 w-full object-cover"
-          onError={(e) => {
+          className="h-60 w-full object-cover" onError={(e) => {
             e.target.src = "https://localhost:7041/uploads/default-trip.webp";
           }}
         />
       </figure>
 
-      <div className="card-body">
+      <div className="card-body p-6">
 
         {/* ================= EDIT MODE ================= */}
 
@@ -157,70 +173,92 @@ export default function ConstructionCard({
 
             <div className="flex justify-between items-center">
 
-              <h2 className="text-2xl font-bold text-yellow-600">
-                🚧 Construction
+              <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                {construction.vehicleName}
               </h2>
 
-              <div className="badge badge-warning badge-lg">
+              <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-xs font-semibold">
                 {construction.status}
+              </span>
+
+            </div>
+
+            <div className="space-y-2 mt-5">
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineUser className="w-5 h-5 text-gray-400" />
+                {construction.userName}
+              </p>
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineTruck className="w-5 h-5 text-gray-400" />
+                {construction.vehicleNumber}
+              </p>
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
+                {construction.location}
+              </p>
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineWrenchScrewdriver className="w-5 h-5 text-gray-400" />
+                {construction.workType}
+              </p>
+
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Description
+                </p>
+
+                <p
+                  className="text-gray-700 mt-1 truncate"
+                  title={construction.description}
+                >
+                  {construction.description}
+                </p>
+
+                <button
+                  onClick={() => copyNumber(construction.contactNumber)}
+                  className="w-full flex items-center justify-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-sm font-medium rounded-xl py-2.5 transition-all duration-300 mt-5"
+                >
+                  <HiOutlineClipboardDocument className="w-4 h-4" />
+                  <span>Copy Number</span>
+                </button>
+
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-3">
+
+                <p className="text-sm text-gray-500">
+                  Contact Number
+                </p>
+
+                <p className="text-lg font-bold text-gray-800">
+                  {construction.contactNumber}
+                </p>
+
               </div>
 
             </div>
 
-            <div className="space-y-3 mt-4 text-[16px]">
-
-              <p>
-                👤 <span className="font-semibold">User :</span>{" "}
-                {construction.userName}
-              </p>
-
-              <p>
-                📞 <span className="font-semibold">Contact :</span>{" "}
-                {construction.contactNumber}
-              </p>
-
-              <p>
-                🚜 <span className="font-semibold">Vehicle :</span>{" "}
-                {construction.vehicleName}
-              </p>
-
-              <p>
-                🔢 <span className="font-semibold">Number :</span>{" "}
-                {construction.vehicleNumber}
-              </p>
-
-              <p>
-                🏗 <span className="font-semibold">Work :</span>{" "}
-                {construction.workType}
-              </p>
-
-              <p>
-                📍 <span className="font-semibold">Location :</span>{" "}
-                {construction.location}
-              </p>
-
-              <p>
-                📝 <span className="font-semibold">Description :</span>{" "}
-                {construction.description}
-              </p>
-
-            </div>
-
-            {showActions  && (
+            {showActions && (
               <div className="flex justify-between mt-6">
 
                 <button
-                  className="btn btn-warning w-[48%]"
+                  className="w-[48%] flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-sm font-medium py-2.5 transition-all duration-300"
                   onClick={() => onEdit(construction)}
                 >
-                  ✏️ Update
+                  <HiOutlinePencilSquare className="w-4 h-4" />
+                  <span>Update</span>
                 </button>
 
                 <button
-                  className="btn btn-error w-[48%]"
+                  className="w-[48%] flex items-center justify-center gap-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-xl text-sm font-medium py-2.5 transition-all duration-300"
                   onClick={() => onDelete(construction.id)}
                 >
-                  🗑 Delete
+                  <HiOutlineTrash className="w-4 h-4" />
+                  <span>Delete</span>
                 </button>
 
               </div>
