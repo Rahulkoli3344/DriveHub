@@ -92,7 +92,7 @@ function Navbar() {
 
             {/* Logo */}
             <a className="text-2xl font-extrabold tracking-wide cursor-pointer">
-              Drive<span className="text-red-500">Finder</span>
+              Drive<span className="text-red-500">Hub</span>
             </a>
           </div>
 
