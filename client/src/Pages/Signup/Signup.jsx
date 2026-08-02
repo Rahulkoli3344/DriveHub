@@ -17,23 +17,28 @@ export default function Signup() {
   });
 
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+ const handleSignup = async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await axios.post(
-        "https://localhost:7041/api/Users/register",
-        formData
-      );
+  try {
+    const res = await axios.post(
+      "https://localhost:7041/api/Users/register",
+      formData
+    );
 
-      alert("Signup successful 🚀");
-      navigate("/login");
+    alert(res.data.message);
+    navigate("/login");
 
-    } catch (error) {
-      console.log("Signup Error:", error.response?.data || error.message);
-      alert(error.response?.data || "Signup failed");
-    }
-  };
+  } catch (error) {
+    console.log(error.response?.data);
+
+    alert(
+      error.response?.data?.message ||
+      error.response?.data ||
+      error.message
+    );
+  }
+};
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">

@@ -14,28 +14,35 @@ export default function Login() {
   });
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await axios.post(
-        "https://localhost:7041/api/Users/login",
-        formData
-      );
+  try {
+    const res = await axios.post(
+      "https://localhost:7041/api/Users/login",
+      formData
+    );
 
-      localStorage.setItem("userId", res.data.userId);
-      localStorage.setItem("name", res.data.name);
-      localStorage.setItem("email", res.data.email);
-      localStorage.setItem("role", res.data.role);
+    localStorage.setItem("userId", res.data.userId);
+    localStorage.setItem("name", res.data.name);
+    localStorage.setItem("email", res.data.email);
+    localStorage.setItem("role", res.data.role);
 
-      alert("Login successful 🚀");
+    // Notify Navbar
+    window.dispatchEvent(new Event("login"));
+    
+    alert("Login successful 🚀");
+    navigate("/");
 
-      window.location.href = "/";;
+  } catch (error) {
+    console.log(error.response?.data || error.message);
 
-    } catch (error) {
-      console.log(error.response?.data || error.message);
-      alert("Login failed ❌");
-    }
-  };
+    alert(
+      error.response?.data?.message ||
+      error.response?.data ||
+      error.message
+    );
+  }
+};
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">

@@ -7,13 +7,28 @@ function Navbar() {
 
   const [userName, setUserName] = useState("Default User");
 
-  useEffect(() => {
-    const name = localStorage.getItem("name");
 
-    if (name) {
-      setUserName(name);
-    }
+  useEffect(() => {
+    const updateUser = () => {
+      const name = localStorage.getItem("name");
+
+      if (name) {
+        setUserName(name);
+      } else {
+        setUserName("Default User");
+      }
+    };
+
+    updateUser();
+
+    window.addEventListener("login", updateUser);
+
+    return () => {
+      window.removeEventListener("login", updateUser);
+    };
   }, []);
+
+
 
   const handleLogout = () => {
 

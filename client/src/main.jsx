@@ -16,6 +16,7 @@ import RentalCars from './Pages/RentalCars/RentalCars.jsx'
 import Dashboard from './Pages/Dashboard/Dashboard.jsx'
 import Trip from './Pages/Trip/Trip.jsx'
 import YourVehicles from './Components/YourVehicles/YourVehicles.jsx'
+import ForgotPassword from './Pages/Login/ForgotPassword.jsx'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path:"login",
         element:<Login />
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />
       },
       {
         path:"agriculture",
