@@ -135,7 +135,7 @@ const TripForm = () => {
                 <input
                     type="text"
                     name="location"
-                    placeholder="Location"
+                    placeholder="Location - Village , Taluka , District"
                     className="input input-bordered w-full"
                     value={trip.location}
                     onChange={handleChange}
