@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addTrip } from "../../Services/TripService";
+import { addHeavyLoad } from "../../Services/HeavyLoadService";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-const TripForm = () => {
+const HeavyLoadForm = () => {
     const navigate = useNavigate();
 
-    const [trip, setTrip] = useState({
+    const [heavyLoad, setHeavyLoad] = useState({
         vehicleName: "",
         vehicleNumber: "",
-        category: "",
+        category: "HeavyLoad",
         location: "",
         ownerName: "",
         ownerContact: "",
-        seatingCapacity: 1,
-        acAvailable: false,
-
+        loadCapacity: "",
+        description: "",
         paymentMethod: "UPI",
         paymentStatus: "Pending",
     });
@@ -24,11 +23,10 @@ const TripForm = () => {
     const [image, setImage] = useState(null);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-
-        setTrip({
-            ...trip,
-            [name]: type === "checkbox" ? checked : value,
+        const { name, value } = e.target;
+        setHeavyLoad({
+            ...heavyLoad,
+            [name]: value,
         });
     };
 
@@ -38,17 +36,17 @@ const TripForm = () => {
 
         try {
             const formData = new FormData();
-            formData.append("userId", localStorage.getItem("userId"));
-            formData.append("vehicleName", trip.vehicleName);
-            formData.append("vehicleNumber", trip.vehicleNumber);
-            formData.append("category", trip.category);
-            formData.append("location", trip.location);
-            formData.append("ownerName", trip.ownerName);
-            formData.append("ownerContact", trip.ownerContact);
-            formData.append("seatingCapacity", trip.seatingCapacity);
-            formData.append("acAvailable", trip.acAvailable);
 
-            formData.append("paymentMethod", trip.paymentMethod);
+            formData.append("userId", localStorage.getItem("userId"));
+            formData.append("vehicleName", heavyLoad.vehicleName);
+            formData.append("vehicleNumber", heavyLoad.vehicleNumber);
+            formData.append("category", heavyLoad.category);
+            formData.append("location", heavyLoad.location);
+            formData.append("ownerName", heavyLoad.ownerName);
+            formData.append("ownerContact", heavyLoad.ownerContact);
+            formData.append("loadCapacity", heavyLoad.loadCapacity);
+            formData.append("description", heavyLoad.description);
+            formData.append("paymentMethod", heavyLoad.paymentMethod);
             formData.append("paymentStatus", "Pending");
 
             if (image) {
@@ -56,23 +54,21 @@ const TripForm = () => {
             }
 
             if (role === "Admin") {
-
                 formData.set("paymentMethod", "Admin");
                 formData.set("paymentStatus", "Success");
                 formData.set("transactionId", "ADMIN-" + Date.now());
 
-                await addTrip(formData);
+                await addHeavyLoad(formData);
 
                 Swal.fire({
                     icon: "success",
-                    title: "Vehicle Added Successfully"
+                    title: "Heavy Load Vehicle Added Successfully"
                 });
 
-                navigate("/trip");
+                navigate("/heavyload");
                 return;
             }
 
-            // Create Razorpay Order
             const { data } = await axios.post(
                 "https://localhost:7041/api/Payment/create-order",
                 {
@@ -85,11 +81,10 @@ const TripForm = () => {
                 amount: data.amount,
                 currency: data.currency,
                 name: "DriveHub",
-                description: "Trip Vehicle Payment",
+                description: "Heavy Load Vehicle Payment",
                 order_id: data.orderId,
 
                 handler: async function (response) {
-
                     formData.set(
                         "transactionId",
                         response.razorpay_payment_id
@@ -100,44 +95,40 @@ const TripForm = () => {
                         "Success"
                     );
 
-                    await addTrip(formData);
+                    await addHeavyLoad(formData);
 
                     Swal.fire({
                         icon: "success",
                         title: "Payment Successful",
-                        text: "Vehicle Added Successfully"
+                        text: "Heavy Load Vehicle Added Successfully"
                     });
 
-                    navigate("/trip");
+                    navigate("/heavyload");
                 },
 
                 modal: {
                     ondismiss: function () {
-
                         Swal.fire({
                             icon: "warning",
                             title: "Payment Cancelled"
                         });
-
                     }
                 }
             };
 
             const razorpay = new window.Razorpay(options);
-
             razorpay.open();
-
 
         } catch (error) {
             console.error(error);
+
             Swal.fire({
                 icon: "error",
                 title: "Failed",
-                text: "Unable to add trip. Please try again.",
+                text: "Unable to add heavy load vehicle. Please try again.",
             });
         }
     };
-
     return (
         <div className="max-w-3xl mx-auto mt-8">
             <form
@@ -145,7 +136,7 @@ const TripForm = () => {
                 className="bg-white shadow-lg rounded-xl p-8 space-y-4"
             >
                 <h2 className="text-3xl font-bold text-center mb-4">
-                    Add Trip Vehicle
+                    Add Heavy Load Vehicle
                 </h2>
 
                 <input
@@ -153,7 +144,7 @@ const TripForm = () => {
                     name="vehicleName"
                     placeholder="Vehicle Name"
                     className="input input-bordered w-full"
-                    value={trip.vehicleName}
+                    value={heavyLoad.vehicleName}
                     onChange={handleChange}
                     required
                 />
@@ -163,7 +154,7 @@ const TripForm = () => {
                     name="vehicleNumber"
                     placeholder="Vehicle Number"
                     className="input input-bordered w-full"
-                    value={trip.vehicleNumber}
+                    value={heavyLoad.vehicleNumber}
                     onChange={handleChange}
                     required
                 />
@@ -173,7 +164,7 @@ const TripForm = () => {
                     name="category"
                     placeholder="Category"
                     className="input input-bordered w-full"
-                    value={trip.category}
+                    value={heavyLoad.category}
                     onChange={handleChange}
                     required
                 />
@@ -183,7 +174,7 @@ const TripForm = () => {
                     name="location"
                     placeholder="Location - Village , Taluka , District"
                     className="input input-bordered w-full"
-                    value={trip.location}
+                    value={heavyLoad.location}
                     onChange={handleChange}
                     required
                 />
@@ -193,7 +184,7 @@ const TripForm = () => {
                     name="ownerName"
                     placeholder="Owner Name"
                     className="input input-bordered w-full"
-                    value={trip.ownerName}
+                    value={heavyLoad.ownerName}
                     onChange={handleChange}
                     required
                 />
@@ -203,32 +194,28 @@ const TripForm = () => {
                     name="ownerContact"
                     placeholder="Owner Contact"
                     className="input input-bordered w-full"
-                    value={trip.ownerContact}
+                    value={heavyLoad.ownerContact}
                     onChange={handleChange}
                     required
                 />
 
                 <input
-                    type="number"
-                    name="seatingCapacity"
-                    placeholder="Seating Capacity"
+                    type="text"
+                    name="loadCapacity"
+                    placeholder="Load Capacity (Example: 10 Ton, 20 Ton)"
                     className="input input-bordered w-full"
-                    value={trip.seatingCapacity}
+                    value={heavyLoad.loadCapacity}
                     onChange={handleChange}
-                    min="1"
-                    max="100"
                     required
                 />
 
-                <label className="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        name="acAvailable"
-                        checked={trip.acAvailable}
-                        onChange={handleChange}
-                    />
-                    AC Available
-                </label>
+                <textarea
+                    name="description"
+                    placeholder="Vehicle Description"
+                    className="textarea textarea-bordered w-full"
+                    value={heavyLoad.description}
+                    onChange={handleChange}
+                />
 
                 <div>
                     <label className="block mb-2 font-semibold">
@@ -251,15 +238,17 @@ const TripForm = () => {
                     )}
                 </div>
 
-
-
-                {/* Payment Section */}
                 {localStorage.getItem("role") !== "Admin" && (
                     <div className="mt-8 border rounded-xl p-5 bg-gray-50 shadow">
-                        <h2 className="text-xl font-semibold mb-4">Payment</h2>
+                        <h2 className="text-xl font-semibold mb-4">
+                            Payment
+                        </h2>
 
                         <div className="mb-3">
-                            <label className="font-medium">Amount</label>
+                            <label className="font-medium">
+                                Amount
+                            </label>
+
                             <input
                                 type="text"
                                 value="₹0 (Free Launch)"
@@ -274,12 +263,13 @@ const TripForm = () => {
                             </label>
 
                             <div className="flex gap-6">
+
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="paymentMethod"
                                         value="UPI"
-                                        checked={trip.paymentMethod === "UPI"}
+                                        checked={heavyLoad.paymentMethod === "UPI"}
                                         onChange={handleChange}
                                     />
                                     UPI
@@ -290,7 +280,7 @@ const TripForm = () => {
                                         type="radio"
                                         name="paymentMethod"
                                         value="Card"
-                                        checked={trip.paymentMethod === "Card"}
+                                        checked={heavyLoad.paymentMethod === "Card"}
                                         onChange={handleChange}
                                     />
                                     Card
@@ -301,10 +291,12 @@ const TripForm = () => {
                                         type="radio"
                                         name="paymentMethod"
                                         value="Net Banking"
-                                        checked={trip.paymentMethod === "Net Banking"} onChange={handleChange}
+                                        checked={heavyLoad.paymentMethod === "Net Banking"}
+                                        onChange={handleChange}
                                     />
                                     Net Banking
                                 </label>
+
                             </div>
                         </div>
                     </div>
@@ -318,9 +310,10 @@ const TripForm = () => {
                         ? "Add Vehicle"
                         : "Proceed to Payment"}
                 </button>
+
             </form>
         </div>
     );
-};
+}
 
-export default TripForm;
+export default HeavyLoadForm;

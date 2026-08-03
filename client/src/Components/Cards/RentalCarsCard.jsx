@@ -1,106 +1,254 @@
 import React from "react";
+import {
+    HiOutlineMapPin,
+    HiOutlineTruck,
+    HiOutlineUser,
+    HiOutlineUserGroup,
+    HiOutlineClipboardDocument,
+    HiOutlinePencilSquare,
+    HiOutlineTrash,
+} from "react-icons/hi2";
 
-export default function RentalCarsCard({
-  rentalCar,
-  editingId,
-  editedRentalCar,
-  onEdit,
-  onDelete,
-  onSave,
-  onChange,
+export default function RentalCarCard({
+    rentalCar,
+    editingId,
+    editedRentalCar,
+    onChange,
+    onSave,
+    onCancel,
+    onEdit,
+    onDelete,
+    showActions = false,
 }) {
-  if (!rentalCar) return null;
 
-  const edit = editingId === rentalCar.id;
+    const isEditing = editingId === rentalCar.id;
 
-  return (
-    <div className="card bg-base-100 shadow-xl border rounded-xl overflow-hidden">
+    const copyNumber = async (number) => {
+        try {
+            await navigator.clipboard.writeText(number);
+            alert("📋 Phone number copied successfully!");
+        } catch {
+            alert("❌ Failed to copy phone number.");
+        }
+    };
 
-      <figure className="h-52">
-        <img
-          src={edit ? editedRentalCar.imagePath : rentalCar.imagePath}
-          alt={rentalCar.vehicleName}
-          className="w-full h-full object-cover"
-        />
-      </figure>
+    return (
+        <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 duration-300">
 
-      <div className="card-body">
+            <figure>
+                <img
+                    src={`https://localhost:7041${isEditing ? editedRentalCar.imagePath : rentalCar.imagePath}`}
+                    alt={rentalCar.vehicleName}
+                    className="h-60 w-full object-cover"
+                    onError={(e) => {
+                        e.target.src = "https://localhost:7041/uploads/default-rentalcar.webp";
+                    }}
+                />
+            </figure>
 
-        {edit ? (
-          <>
-            <input className="input input-bordered" name="userName" value={editedRentalCar.userName} onChange={onChange}/>
-            <input className="input input-bordered" name="contactNumber" value={editedRentalCar.contactNumber} onChange={onChange}/>
-            <input className="input input-bordered" name="vehicleName" value={editedRentalCar.vehicleName} onChange={onChange}/>
-            <input className="input input-bordered" name="vehicleNumber" value={editedRentalCar.vehicleNumber} onChange={onChange}/>
-            <input className="input input-bordered" name="fuelType" value={editedRentalCar.fuelType} onChange={onChange}/>
-            <input className="input input-bordered" name="transmission" value={editedRentalCar.transmission} onChange={onChange}/>
-            <input className="input input-bordered" name="seats" value={editedRentalCar.seats} onChange={onChange}/>
-            <input className="input input-bordered" name="rentPerDay" value={editedRentalCar.rentPerDay} onChange={onChange}/>
-            <input className="input input-bordered" name="location" value={editedRentalCar.location} onChange={onChange}/>
-            <textarea className="textarea textarea-bordered" name="description" value={editedRentalCar.description} onChange={onChange}/>
-            <input className="input input-bordered" name="imagePath" value={editedRentalCar.imagePath} onChange={onChange}/>
+            <div className="card-body p-6">
 
-            <button className="btn btn-success mt-3" onClick={onSave}>
-              Save
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="flex justify-between">
+                {isEditing ? (
+                    <>
 
-              <h2 className="card-title">
-                {rentalCar.vehicleName}
-              </h2>
+                        <label className="font-semibold">Vehicle Name</label>
+                        <input
+                            type="text"
+                            name="vehicleName"
+                            value={editedRentalCar.vehicleName}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
 
-              <span className="badge badge-primary">
-                {rentalCar.status}
-              </span>
+                        <label className="font-semibold mt-2">Vehicle Number</label>
+                        <input
+                            type="text"
+                            name="vehicleNumber"
+                            value={editedRentalCar.vehicleNumber}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
+
+                        <label className="font-semibold mt-2">Category</label>
+                        <input
+                            type="text"
+                            name="category"
+                            value={editedRentalCar.category}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
+
+                        <label className="font-semibold mt-2">Location</label>
+                        <input
+                            type="text"
+                            name="location"
+                            value={editedRentalCar.location}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
+
+                        <label className="font-semibold mt-2">Owner Name</label>
+                        <input
+                            type="text"
+                            name="ownerName"
+                            value={editedRentalCar.ownerName}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
+
+                        <label className="font-semibold mt-2">Owner Contact</label>
+                        <input
+                            type="text"
+                            name="ownerContact"
+                            value={editedRentalCar.ownerContact}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
+
+                        <label className="font-semibold mt-2">
+                            Seating Capacity
+                        </label>
+                        <input
+                            type="number"
+                            name="seatingCapacity"
+                            value={editedRentalCar.seatingCapacity}
+                            onChange={onChange}
+                            className="input input-bordered w-full"
+                        />
+
+                        <div className="form-control mt-4">
+                            <label className="cursor-pointer flex items-center gap-3">
+                                <span className="font-semibold">AC Available</span>
+
+                                <input
+                                    type="checkbox"
+                                    name="acAvailable"
+                                    checked={editedRentalCar.acAvailable}
+                                    onChange={onChange}
+                                    className="checkbox checkbox-primary"
+                                />
+                            </label>
+                        </div>
+
+
+                        <div className="card-actions justify-end mt-6">
+
+                            <button
+                                className="btn btn-success"
+                                onClick={onSave}
+                            >
+                                Save
+                            </button>
+
+                            <button
+                                className="btn btn-outline"
+                                onClick={onCancel}
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
+
+                    </>
+                ) : (
+                    <>
+
+                        <div className="flex justify-between items-center">
+
+                            <h2 className="text-xl font-bold text-gray-900">
+                                {rentalCar.vehicleName}
+                            </h2>
+
+                            <span className="px-3 py-1 rounded-full bg-blue-50 text-black border border-blue-100 text-sm font-semibold">
+                                {rentalCar.category}
+                            </span>
+
+                        </div>
+
+
+                        <div className="space-y-2 mt-5">
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
+                                {rentalCar.location}
+                            </p>
+
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineTruck className="w-5 h-5 text-gray-400" />
+                                {rentalCar.vehicleNumber}
+                            </p>
+
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineUser className="w-5 h-5 text-gray-400" />
+                                {rentalCar.ownerName}
+                            </p>
+
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                <HiOutlineUserGroup className="w-5 h-5 text-gray-400" />
+                                {rentalCar.seatingCapacity} Seats
+                            </p>
+
+                            <p className="flex items-center gap-2 text-gray-600">
+                                ❄ {rentalCar.acAvailable ? "AC Available" : "Non AC"}
+                            </p>
+
+
+
+                            <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                                <p className="text-sm text-gray-500">
+                                    Owner Contact
+                                </p>
+
+                                <p className="text-lg font-bold text-gray-800">
+                                    {rentalCar.ownerContact}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            onClick={() => copyNumber(rentalCar.ownerContact)}
+                            className="w-full flex items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl font-semibold py-3 transition-all duration-300"
+                        >
+                            <HiOutlineClipboardDocument className="w-5 h-5" />
+                            <span>Copy Number</span>
+                        </button>
+
+
+                        {showActions && (
+                            <div className="flex justify-between mt-6">
+
+                                <button
+                                    className="w-[48%] flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium py-3"
+                                    onClick={() => onEdit(rentalCar)}
+                                >
+                                    <HiOutlinePencilSquare className="w-5 h-5" />
+                                    <span>Update</span>
+                                </button>
+
+
+                                <button
+                                    className="w-[48%] flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-xl font-medium py-3"
+                                    onClick={() => onDelete(rentalCar.id)}
+                                >
+                                    <HiOutlineTrash className="w-5 h-5" />
+                                    <span>Delete</span>
+                                </button>
+
+                            </div>
+                        )}
+
+                    </>
+                )}
 
             </div>
 
-            <div className="space-y-2 text-sm mt-3">
-
-              <p>👤 <b>Owner:</b> {rentalCar.userName}</p>
-
-              <p>📞 <b>Contact:</b> {rentalCar.contactNumber}</p>
-
-              <p>🚗 <b>Vehicle No:</b> {rentalCar.vehicleNumber}</p>
-
-              <p>⛽ <b>Fuel:</b> {rentalCar.fuelType}</p>
-
-              <p>⚙️ <b>Transmission:</b> {rentalCar.transmission}</p>
-
-              <p>👥 <b>Seats:</b> {rentalCar.seats}</p>
-
-              <p>📍 <b>Location:</b> {rentalCar.location}</p>
-
-              <p>💰 <b>Rent / Day:</b> ₹{rentalCar.rentPerDay}</p>
-
-              <p>📝 <b>Description:</b> {rentalCar.description}</p>
-
-            </div>
-
-            <div className="card-actions mt-5">
-
-              <button
-                className="btn btn-warning flex-1"
-                onClick={() => onEdit(rentalCar)}
-              >
-                Update
-              </button>
-
-              <button
-                className="btn btn-error flex-1"
-                onClick={() => onDelete(rentalCar.id)}
-              >
-                Delete
-              </button>
-
-            </div>
-          </>
-        )}
-
-      </div>
-    </div>
-  );
+        </div>
+    );
 }

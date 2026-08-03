@@ -1,4 +1,12 @@
 import React from "react";
+import {
+  HiOutlineMapPin,
+  HiOutlineTruck,
+  HiOutlineUser,
+  HiOutlineClipboardDocument,
+  HiOutlinePencilSquare,
+  HiOutlineTrash,
+} from "react-icons/hi2";
 
 export default function LightLoadCard({
   lightLoad,
@@ -9,179 +17,236 @@ export default function LightLoadCard({
   onCancel,
   onEdit,
   onDelete,
+  showActions = false,
 }) {
+
   const isEditing = editingId === lightLoad.id;
 
-  return (
-    <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-xl h-[720px] flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+  const copyNumber = async (number) => {
+    try {
+      await navigator.clipboard.writeText(number);
+      alert("📋 Phone number copied successfully!");
+    } catch (err) {
+      alert("❌ Failed to copy phone number.");
+    }
+  };
 
-      <figure className="h-60 overflow-hidden">
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 duration-300">
+
+      <figure>
         <img
-          src={isEditing ? editedLightLoad.imagePath : lightLoad.imagePath}
+          src={`https://localhost:7041${isEditing ? editedLightLoad.imagePath : lightLoad.imagePath}`}
           alt={lightLoad.vehicleName}
-          className="w-full h-full object-cover"
+          className="h-60 w-full object-cover"
+          onError={(e) => {
+            e.target.src = "https://localhost:7041/uploads/default-lightload.webp";
+          }}
         />
       </figure>
 
-      <div className="card-body flex flex-col flex-1">
+      <div className="card-body p-6">
 
         {isEditing ? (
           <>
-            <input
-              className="input input-bordered mb-2"
-              name="userName"
-              value={editedLightLoad.userName}
-              onChange={onChange}
-              placeholder="User Name"
-            />
 
+            <label className="font-semibold">Vehicle Name</label>
             <input
-              className="input input-bordered mb-2"
-              name="contactNumber"
-              value={editedLightLoad.contactNumber}
-              onChange={onChange}
-              placeholder="Contact Number"
-            />
-
-            <input
-              className="input input-bordered mb-2"
+              type="text"
               name="vehicleName"
               value={editedLightLoad.vehicleName}
               onChange={onChange}
-              placeholder="Vehicle Name"
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Vehicle Number</label>
             <input
-              className="input input-bordered mb-2"
+              type="text"
               name="vehicleNumber"
               value={editedLightLoad.vehicleNumber}
               onChange={onChange}
-              placeholder="Vehicle Number"
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Category</label>
             <input
-              className="input input-bordered mb-2"
-              name="workType"
-              value={editedLightLoad.workType}
+              type="text"
+              name="category"
+              value={editedLightLoad.category}
               onChange={onChange}
-              placeholder="Work Type"
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Location</label>
             <input
-              className="input input-bordered mb-2"
+              type="text"
               name="location"
               value={editedLightLoad.location}
               onChange={onChange}
-              placeholder="Location"
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Owner Name</label>
+            <input
+              type="text"
+              name="ownerName"
+              value={editedLightLoad.ownerName}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+            <label className="font-semibold mt-2">Owner Contact</label>
+            <input
+              type="text"
+              name="ownerContact"
+              value={editedLightLoad.ownerContact}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+            <label className="font-semibold mt-2">Load Capacity</label>
+            <input
+              type="text"
+              name="loadCapacity"
+              value={editedLightLoad.loadCapacity}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+            <label className="font-semibold mt-2">Description</label>
             <textarea
-              className="textarea textarea-bordered mb-2 h-24"
               name="description"
               value={editedLightLoad.description}
               onChange={onChange}
+              className="textarea textarea-bordered w-full"
             />
 
-            <select
-              className="select select-bordered mb-2"
-              name="status"
-              value={editedLightLoad.status}
-              onChange={onChange}
-            >
-              <option>Available</option>
-              <option>Busy</option>
-              <option>Maintenance</option>
-            </select>
+            <div className="card-actions justify-end mt-6">
 
-            <input
-              className="input input-bordered"
-              name="imagePath"
-              value={editedLightLoad.imagePath}
-              onChange={onChange}
-              placeholder="Image Path"
-            />
-
-            <div className="mt-auto flex gap-3">
-              <button className="btn btn-success flex-1" onClick={onSave}>
+              <button
+                className="btn btn-success"
+                onClick={onSave}
+              >
                 Save
               </button>
 
-              <button className="btn btn-outline flex-1" onClick={onCancel}>
+              <button
+                className="btn btn-outline"
+                onClick={onCancel}
+              >
                 Cancel
               </button>
+
             </div>
+
           </>
         ) : (
           <>
+
             <div className="flex justify-between items-center">
 
-              <h2 className="text-xl font-bold text-primary">
+              <h2 className="text-xl font-bold text-gray-900">
                 {lightLoad.vehicleName}
               </h2>
 
-              <div className="badge badge-primary">
-                🚚 Light Load
-              </div>
+              <span className="px-3 py-1 rounded-full bg-blue-50 text-black border border-blue-100 text-sm font-semibold">
+                {lightLoad.category}
+              </span>
 
             </div>
 
-            <div className="badge badge-outline mt-2">
-              {lightLoad.status}
-            </div>
 
-            <div className="space-y-2 mt-4 flex-1">
+            <div className="space-y-2 mt-5">
 
-              <p>
-                👤 <span className="font-semibold">User:</span>{" "}
-                {lightLoad.userName}
-              </p>
-
-              <p>
-                📞 <span className="font-semibold">Contact:</span>{" "}
-                {lightLoad.contactNumber}
-              </p>
-
-              <p>
-                🚚 <span className="font-semibold">Vehicle No:</span>{" "}
-                {lightLoad.vehicleNumber}
-              </p>
-
-              <p>
-                📦 <span className="font-semibold">Work:</span>{" "}
-                {lightLoad.workType}
-              </p>
-
-              <p>
-                📍 <span className="font-semibold">Location:</span>{" "}
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
                 {lightLoad.location}
               </p>
 
-              <div className="h-20 overflow-hidden">
-                <span className="font-semibold">📝 Description:</span>
-                <p className="text-sm text-gray-500 mt-1">
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineTruck className="w-5 h-5 text-gray-400" />
+                {lightLoad.vehicleNumber}
+              </p>
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineUser className="w-5 h-5 text-gray-400" />
+                {lightLoad.ownerName}
+              </p>
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Load Capacity
+                </p>
+
+                <p className="text-lg font-bold text-gray-800">
+                  {lightLoad.loadCapacity}
+                </p>
+
+              </div>
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Description
+                </p>
+
+                <p className="text-gray-800">
                   {lightLoad.description}
                 </p>
+
+              </div>
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Owner Contact
+                </p>
+
+                <p className="text-lg font-bold text-gray-800">
+                  {lightLoad.ownerContact}
+                </p>
+
               </div>
 
             </div>
 
-            <div className="mt-auto flex gap-3">
 
-              <button
-                className="btn btn-warning flex-1"
-                onClick={() => onEdit(lightLoad)}
-              >
-                ✏ Update
-              </button>
+            <button
+              onClick={() => copyNumber(lightLoad.ownerContact)}
+              className="w-full flex items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-xl font-semibold py-3 transition-all duration-300"
+            >
+              <HiOutlineClipboardDocument className="w-5 h-5" />
+              <span>Copy Number</span>
+            </button>
 
-              <button
-                className="btn btn-error flex-1"
-                onClick={() => onDelete(lightLoad.id)}
-              >
-                🗑 Delete
-              </button>
 
-            </div>
+            {showActions && (
+              <div className="flex justify-between mt-6">
+
+                <button
+                  className="w-[48%] flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium py-3"
+                  onClick={() => onEdit(lightLoad)}
+                >
+                  <HiOutlinePencilSquare className="w-5 h-5" />
+                  <span>Update</span>
+                </button>
+
+
+                <button
+                  className="w-[48%] flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-xl font-medium py-3"
+                  onClick={() => onDelete(lightLoad.id)}
+                >
+                  <HiOutlineTrash className="w-5 h-5" />
+                  <span>Delete</span>
+                </button>
+
+              </div>
+            )}
+
           </>
         )}
 

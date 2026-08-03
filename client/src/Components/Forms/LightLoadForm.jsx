@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addTrip } from "../../Services/TripService";
+import { addLightLoad } from "../../Services/LightLoadService";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-const TripForm = () => {
+const LightLoadForm = () => {
     const navigate = useNavigate();
 
-    const [trip, setTrip] = useState({
+    const [lightLoad, setLightLoad] = useState({
         vehicleName: "",
         vehicleNumber: "",
-        category: "",
+        category: "LightLoad",
         location: "",
         ownerName: "",
         ownerContact: "",
-        seatingCapacity: 1,
-        acAvailable: false,
-
+        loadCapacity: "",
+        description: "",
         paymentMethod: "UPI",
         paymentStatus: "Pending",
     });
@@ -24,31 +23,32 @@ const TripForm = () => {
     const [image, setImage] = useState(null);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
 
-        setTrip({
-            ...trip,
-            [name]: type === "checkbox" ? checked : value,
+        setLightLoad({
+            ...lightLoad,
+            [name]: value,
         });
     };
 
     const handleSubmit = async (e) => {
         const role = localStorage.getItem("role");
+
         e.preventDefault();
 
         try {
             const formData = new FormData();
-            formData.append("userId", localStorage.getItem("userId"));
-            formData.append("vehicleName", trip.vehicleName);
-            formData.append("vehicleNumber", trip.vehicleNumber);
-            formData.append("category", trip.category);
-            formData.append("location", trip.location);
-            formData.append("ownerName", trip.ownerName);
-            formData.append("ownerContact", trip.ownerContact);
-            formData.append("seatingCapacity", trip.seatingCapacity);
-            formData.append("acAvailable", trip.acAvailable);
 
-            formData.append("paymentMethod", trip.paymentMethod);
+            formData.append("userId", localStorage.getItem("userId"));
+            formData.append("vehicleName", lightLoad.vehicleName);
+            formData.append("vehicleNumber", lightLoad.vehicleNumber);
+            formData.append("category", lightLoad.category);
+            formData.append("location", lightLoad.location);
+            formData.append("ownerName", lightLoad.ownerName);
+            formData.append("ownerContact", lightLoad.ownerContact);
+            formData.append("loadCapacity", lightLoad.loadCapacity);
+            formData.append("description", lightLoad.description);
+            formData.append("paymentMethod", lightLoad.paymentMethod);
             formData.append("paymentStatus", "Pending");
 
             if (image) {
@@ -61,18 +61,17 @@ const TripForm = () => {
                 formData.set("paymentStatus", "Success");
                 formData.set("transactionId", "ADMIN-" + Date.now());
 
-                await addTrip(formData);
+                await addLightLoad(formData);
 
                 Swal.fire({
                     icon: "success",
-                    title: "Vehicle Added Successfully"
+                    title: "Light Load Vehicle Added Successfully"
                 });
 
-                navigate("/trip");
+                navigate("/lightload");
                 return;
             }
 
-            // Create Razorpay Order
             const { data } = await axios.post(
                 "https://localhost:7041/api/Payment/create-order",
                 {
@@ -85,7 +84,7 @@ const TripForm = () => {
                 amount: data.amount,
                 currency: data.currency,
                 name: "DriveHub",
-                description: "Trip Vehicle Payment",
+                description: "Light Load Vehicle Payment",
                 order_id: data.orderId,
 
                 handler: async function (response) {
@@ -100,15 +99,15 @@ const TripForm = () => {
                         "Success"
                     );
 
-                    await addTrip(formData);
+                    await addLightLoad(formData);
 
                     Swal.fire({
                         icon: "success",
                         title: "Payment Successful",
-                        text: "Vehicle Added Successfully"
+                        text: "Light Load Vehicle Added Successfully"
                     });
 
-                    navigate("/trip");
+                    navigate("/lightload");
                 },
 
                 modal: {
@@ -127,17 +126,17 @@ const TripForm = () => {
 
             razorpay.open();
 
-
         } catch (error) {
+
             console.error(error);
+
             Swal.fire({
                 icon: "error",
                 title: "Failed",
-                text: "Unable to add trip. Please try again.",
+                text: "Unable to add light load vehicle. Please try again.",
             });
         }
     };
-
     return (
         <div className="max-w-3xl mx-auto mt-8">
             <form
@@ -145,7 +144,7 @@ const TripForm = () => {
                 className="bg-white shadow-lg rounded-xl p-8 space-y-4"
             >
                 <h2 className="text-3xl font-bold text-center mb-4">
-                    Add Trip Vehicle
+                    Add Light Load Vehicle
                 </h2>
 
                 <input
@@ -153,7 +152,7 @@ const TripForm = () => {
                     name="vehicleName"
                     placeholder="Vehicle Name"
                     className="input input-bordered w-full"
-                    value={trip.vehicleName}
+                    value={lightLoad.vehicleName}
                     onChange={handleChange}
                     required
                 />
@@ -163,7 +162,7 @@ const TripForm = () => {
                     name="vehicleNumber"
                     placeholder="Vehicle Number"
                     className="input input-bordered w-full"
-                    value={trip.vehicleNumber}
+                    value={lightLoad.vehicleNumber}
                     onChange={handleChange}
                     required
                 />
@@ -173,7 +172,7 @@ const TripForm = () => {
                     name="category"
                     placeholder="Category"
                     className="input input-bordered w-full"
-                    value={trip.category}
+                    value={lightLoad.category}
                     onChange={handleChange}
                     required
                 />
@@ -183,7 +182,7 @@ const TripForm = () => {
                     name="location"
                     placeholder="Location - Village , Taluka , District"
                     className="input input-bordered w-full"
-                    value={trip.location}
+                    value={lightLoad.location}
                     onChange={handleChange}
                     required
                 />
@@ -193,7 +192,7 @@ const TripForm = () => {
                     name="ownerName"
                     placeholder="Owner Name"
                     className="input input-bordered w-full"
-                    value={trip.ownerName}
+                    value={lightLoad.ownerName}
                     onChange={handleChange}
                     required
                 />
@@ -203,32 +202,28 @@ const TripForm = () => {
                     name="ownerContact"
                     placeholder="Owner Contact"
                     className="input input-bordered w-full"
-                    value={trip.ownerContact}
+                    value={lightLoad.ownerContact}
                     onChange={handleChange}
                     required
                 />
 
                 <input
-                    type="number"
-                    name="seatingCapacity"
-                    placeholder="Seating Capacity"
+                    type="text"
+                    name="loadCapacity"
+                    placeholder="Load Capacity (Example: 1 Ton, 2 Ton)"
                     className="input input-bordered w-full"
-                    value={trip.seatingCapacity}
+                    value={lightLoad.loadCapacity}
                     onChange={handleChange}
-                    min="1"
-                    max="100"
                     required
                 />
 
-                <label className="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        name="acAvailable"
-                        checked={trip.acAvailable}
-                        onChange={handleChange}
-                    />
-                    AC Available
-                </label>
+                <textarea
+                    name="description"
+                    placeholder="Vehicle Description"
+                    className="textarea textarea-bordered w-full"
+                    value={lightLoad.description}
+                    onChange={handleChange}
+                />
 
                 <div>
                     <label className="block mb-2 font-semibold">
@@ -251,15 +246,18 @@ const TripForm = () => {
                     )}
                 </div>
 
-
-
-                {/* Payment Section */}
                 {localStorage.getItem("role") !== "Admin" && (
                     <div className="mt-8 border rounded-xl p-5 bg-gray-50 shadow">
-                        <h2 className="text-xl font-semibold mb-4">Payment</h2>
+
+                        <h2 className="text-xl font-semibold mb-4">
+                            Payment
+                        </h2>
 
                         <div className="mb-3">
-                            <label className="font-medium">Amount</label>
+                            <label className="font-medium">
+                                Amount
+                            </label>
+
                             <input
                                 type="text"
                                 value="₹0 (Free Launch)"
@@ -274,12 +272,13 @@ const TripForm = () => {
                             </label>
 
                             <div className="flex gap-6">
+
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="paymentMethod"
                                         value="UPI"
-                                        checked={trip.paymentMethod === "UPI"}
+                                        checked={lightLoad.paymentMethod === "UPI"}
                                         onChange={handleChange}
                                     />
                                     UPI
@@ -290,7 +289,7 @@ const TripForm = () => {
                                         type="radio"
                                         name="paymentMethod"
                                         value="Card"
-                                        checked={trip.paymentMethod === "Card"}
+                                        checked={lightLoad.paymentMethod === "Card"}
                                         onChange={handleChange}
                                     />
                                     Card
@@ -301,10 +300,12 @@ const TripForm = () => {
                                         type="radio"
                                         name="paymentMethod"
                                         value="Net Banking"
-                                        checked={trip.paymentMethod === "Net Banking"} onChange={handleChange}
+                                        checked={lightLoad.paymentMethod === "Net Banking"}
+                                        onChange={handleChange}
                                     />
                                     Net Banking
                                 </label>
+
                             </div>
                         </div>
                     </div>
@@ -318,9 +319,10 @@ const TripForm = () => {
                         ? "Add Vehicle"
                         : "Proceed to Payment"}
                 </button>
+
             </form>
         </div>
     );
-};
+}
 
-export default TripForm;
+export default LightLoadForm;

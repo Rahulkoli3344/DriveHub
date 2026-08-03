@@ -1,4 +1,12 @@
 import React from "react";
+import {
+  HiOutlineMapPin,
+  HiOutlineTruck,
+  HiOutlineUser,
+  HiOutlineClipboardDocument,
+  HiOutlinePencilSquare,
+  HiOutlineTrash,
+} from "react-icons/hi2";
 
 export default function HeavyLoadCard({
   heavyLoad,
@@ -9,181 +17,235 @@ export default function HeavyLoadCard({
   onCancel,
   onEdit,
   onDelete,
+  showActions = false,
 }) {
+
   const isEditing = editingId === heavyLoad.id;
 
-  return (
-    <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-xl h-[720px] flex flex-col hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+  const copyNumber = async (number) => {
+    try {
+      await navigator.clipboard.writeText(number);
+      alert("📋 Phone number copied successfully!");
+    } catch (err) {
+      alert("❌ Failed to copy phone number.");
+    }
+  };
 
-      {/* Fixed Image */}
-      <figure className="h-60 w-full overflow-hidden rounded-t-2xl">
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 duration-300">
+
+      <figure>
         <img
-          src={isEditing ? editedHeavyLoad.imagePath : heavyLoad.imagePath}
+          src={`https://localhost:7041${isEditing ? editedHeavyLoad.imagePath : heavyLoad.imagePath}`}
           alt={heavyLoad.vehicleName}
-          className="w-full h-full object-cover object-center"
+          className="h-60 w-full object-cover"
+          onError={(e) => {
+            e.target.src = "https://localhost:7041/uploads/default-heavyload.webp";
+          }}
         />
       </figure>
 
-      <div className="card-body flex flex-col flex-1">
+      <div className="card-body p-6">
 
         {isEditing ? (
           <>
-            <input
-              className="input input-bordered mb-2"
-              name="userName"
-              value={editedHeavyLoad.userName}
-              onChange={onChange}
-              placeholder="User Name"
-            />
 
+            <label className="font-semibold">Vehicle Name</label>
             <input
-              className="input input-bordered mb-2"
-              name="contactNumber"
-              value={editedHeavyLoad.contactNumber}
-              onChange={onChange}
-              placeholder="Contact Number"
-            />
-
-            <input
-              className="input input-bordered mb-2"
+              type="text"
               name="vehicleName"
               value={editedHeavyLoad.vehicleName}
               onChange={onChange}
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Vehicle Number</label>
             <input
-              className="input input-bordered mb-2"
+              type="text"
               name="vehicleNumber"
               value={editedHeavyLoad.vehicleNumber}
               onChange={onChange}
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Category</label>
             <input
-              className="input input-bordered mb-2"
-              name="workType"
-              value={editedHeavyLoad.workType}
+              type="text"
+              name="category"
+              value={editedHeavyLoad.category}
               onChange={onChange}
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Location</label>
             <input
-              className="input input-bordered mb-2"
+              type="text"
               name="location"
               value={editedHeavyLoad.location}
               onChange={onChange}
+              className="input input-bordered w-full"
             />
 
+            <label className="font-semibold mt-2">Owner Name</label>
+            <input
+              type="text"
+              name="ownerName"
+              value={editedHeavyLoad.ownerName}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+            <label className="font-semibold mt-2">Owner Contact</label>
+            <input
+              type="text"
+              name="ownerContact"
+              value={editedHeavyLoad.ownerContact}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+            <label className="font-semibold mt-2">Load Capacity</label>
+            <input
+              type="text"
+              name="loadCapacity"
+              value={editedHeavyLoad.loadCapacity}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+            <label className="font-semibold mt-2">Description</label>
             <textarea
-              className="textarea textarea-bordered mb-2 h-24"
               name="description"
               value={editedHeavyLoad.description}
               onChange={onChange}
+              className="textarea textarea-bordered w-full"
             />
 
-            <select
-              className="select select-bordered mb-2"
-              name="status"
-              value={editedHeavyLoad.status}
-              onChange={onChange}
-            >
-              <option>Available</option>
-              <option>Busy</option>
-              <option>Maintenance</option>
-            </select>
+            <div className="card-actions justify-end mt-6">
 
-            <input
-              className="input input-bordered"
-              name="imagePath"
-              value={editedHeavyLoad.imagePath}
-              onChange={onChange}
-            />
-
-            <div className="mt-auto flex gap-3">
               <button
-                className="btn btn-success flex-1"
+                className="btn btn-success"
                 onClick={onSave}
               >
                 Save
               </button>
 
               <button
-                className="btn btn-outline flex-1"
+                className="btn btn-outline"
                 onClick={onCancel}
               >
                 Cancel
               </button>
+
             </div>
+
           </>
         ) : (
           <>
-            {/* Header */}
+
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-primary">
+
+              <h2 className="text-xl font-bold text-gray-900">
                 {heavyLoad.vehicleName}
               </h2>
 
-              <div className="badge badge-primary">
-                🚛 Heavy Load
-              </div>
+              <span className="px-3 py-1 rounded-full bg-orange-50 text-black border border-orange-100 text-sm font-semibold">
+                {heavyLoad.category}
+              </span>
+
             </div>
 
-            <div className="badge badge-outline mt-2">
-              {heavyLoad.status}
-            </div>
 
-            {/* Information */}
-            <div className="space-y-2 mt-4 flex-1">
+            <div className="space-y-2 mt-5">
 
-              <p>
-                👤 <span className="font-semibold">User:</span>{" "}
-                {heavyLoad.userName}
-              </p>
-
-              <p>
-                📞 <span className="font-semibold">Contact:</span>{" "}
-                {heavyLoad.contactNumber}
-              </p>
-
-              <p>
-                🚛 <span className="font-semibold">Vehicle No:</span>{" "}
-                {heavyLoad.vehicleNumber}
-              </p>
-
-              <p>
-                ⚙ <span className="font-semibold">Work:</span>{" "}
-                {heavyLoad.workType}
-              </p>
-
-              <p>
-                📍 <span className="font-semibold">Location:</span>{" "}
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
                 {heavyLoad.location}
               </p>
 
-              {/* Fixed Description */}
-              <div className="h-20 overflow-hidden">
-                <span className="font-semibold">📝 Description:</span>
-                <p className="text-sm text-gray-500 mt-1">
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineTruck className="w-5 h-5 text-gray-400" />
+                {heavyLoad.vehicleNumber}
+              </p>
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineUser className="w-5 h-5 text-gray-400" />
+                {heavyLoad.ownerName}
+              </p>
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Load Capacity
+                </p>
+
+                <p className="text-lg font-bold text-gray-800">
+                  {heavyLoad.loadCapacity}
+                </p>
+
+              </div>
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Description
+                </p>
+
+                <p className="text-gray-800">
                   {heavyLoad.description}
                 </p>
+
+              </div>
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Owner Contact
+                </p>
+
+                <p className="text-lg font-bold text-gray-800">
+                  {heavyLoad.ownerContact}
+                </p>
+
               </div>
 
             </div>
 
-            {/* Bottom Buttons */}
-            <div className="mt-auto flex gap-3">
-              <button
-                className="btn btn-warning flex-1"
-                onClick={() => onEdit(heavyLoad)}
-              >
-                ✏ Update
-              </button>
 
-              <button
-                className="btn btn-error flex-1"
-                onClick={() => onDelete(heavyLoad.id)}
-              >
-                🗑 Delete
-              </button>
-            </div>
+            <button
+              onClick={() => copyNumber(heavyLoad.ownerContact)}
+              className="w-full flex items-center justify-center gap-2 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-xl font-semibold py-3 transition-all duration-300"
+            >
+              <HiOutlineClipboardDocument className="w-5 h-5" />
+              <span>Copy Number</span>
+            </button>
+
+
+            {showActions && (
+              <div className="flex justify-between mt-6">
+
+                <button
+                  className="w-[48%] flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium py-3"
+                  onClick={() => onEdit(heavyLoad)}
+                >
+                  <HiOutlinePencilSquare className="w-5 h-5" />
+                  <span>Update</span>
+                </button>
+
+
+                <button
+                  className="w-[48%] flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-xl font-medium py-3"
+                  onClick={() => onDelete(heavyLoad.id)}
+                >
+                  <HiOutlineTrash className="w-5 h-5" />
+                  <span>Delete</span>
+                </button>
+
+              </div>
+            )}
 
           </>
         )}

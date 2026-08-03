@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addTrip } from "../../Services/TripService";
+import { addRentalCar } from "../../Services/RentalCarService";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-const TripForm = () => {
+const RentalCarForm = () => {
     const navigate = useNavigate();
 
-    const [trip, setTrip] = useState({
+    const [rentalCar, setRentalCar] = useState({
         vehicleName: "",
         vehicleNumber: "",
-        category: "",
+        category: "RentalCar",
         location: "",
         ownerName: "",
         ownerContact: "",
@@ -23,37 +23,44 @@ const TripForm = () => {
 
     const [image, setImage] = useState(null);
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
 
-        setTrip({
-            ...trip,
+    const handleChange = (e) => {
+        const { name, value, checked, type } = e.target;
+
+        setRentalCar({
+            ...rentalCar,
             [name]: type === "checkbox" ? checked : value,
         });
     };
 
     const handleSubmit = async (e) => {
-        const role = localStorage.getItem("role");
         e.preventDefault();
 
-        try {
-            const formData = new FormData();
-            formData.append("userId", localStorage.getItem("userId"));
-            formData.append("vehicleName", trip.vehicleName);
-            formData.append("vehicleNumber", trip.vehicleNumber);
-            formData.append("category", trip.category);
-            formData.append("location", trip.location);
-            formData.append("ownerName", trip.ownerName);
-            formData.append("ownerContact", trip.ownerContact);
-            formData.append("seatingCapacity", trip.seatingCapacity);
-            formData.append("acAvailable", trip.acAvailable);
+        const role = localStorage.getItem("role");
 
-            formData.append("paymentMethod", trip.paymentMethod);
-            formData.append("paymentStatus", "Pending");
+        try {
+
+            const formData = new FormData();
+
+            formData.append("userId", localStorage.getItem("userId"));
+            formData.append("vehicleName", rentalCar.vehicleName);
+            formData.append("vehicleNumber", rentalCar.vehicleNumber);
+            formData.append("category", rentalCar.category);
+            formData.append("location", rentalCar.location);
+            formData.append("ownerName", rentalCar.ownerName);
+            formData.append("ownerContact", rentalCar.ownerContact);
+            formData.append("seatingCapacity", rentalCar.seatingCapacity);
+            formData.append("acAvailable", rentalCar.acAvailable);
 
             if (image) {
                 formData.append("image", image);
             }
+
+            formData.append("paymentMethod", rentalCar.paymentMethod);
+            formData.append("paymentStatus", "Pending");
+
+
+            // ================= ADMIN ==================
 
             if (role === "Admin") {
 
@@ -61,18 +68,20 @@ const TripForm = () => {
                 formData.set("paymentStatus", "Success");
                 formData.set("transactionId", "ADMIN-" + Date.now());
 
-                await addTrip(formData);
+                await addRentalCar(formData);
 
                 Swal.fire({
                     icon: "success",
-                    title: "Vehicle Added Successfully"
+                    title: "Rental Car Added Successfully"
                 });
 
-                navigate("/trip");
+                navigate("/rentalcars");
                 return;
             }
 
-            // Create Razorpay Order
+
+            // =============== CREATE ORDER =================
+
             const { data } = await axios.post(
                 "https://localhost:7041/api/Payment/create-order",
                 {
@@ -80,15 +89,26 @@ const TripForm = () => {
                 }
             );
 
+            console.log("Order Response :", data);
+            alert(JSON.stringify(data));
+
             const options = {
+
                 key: data.key,
+
                 amount: data.amount,
+
                 currency: data.currency,
+
                 name: "DriveHub",
-                description: "Trip Vehicle Payment",
+
+                description: "Rental Car Payment",
+
                 order_id: data.orderId,
 
                 handler: async function (response) {
+
+                    console.log("Payment Success :", response);
 
                     formData.set(
                         "transactionId",
@@ -100,18 +120,19 @@ const TripForm = () => {
                         "Success"
                     );
 
-                    await addTrip(formData);
+                    await addRentalCar(formData);
 
                     Swal.fire({
                         icon: "success",
                         title: "Payment Successful",
-                        text: "Vehicle Added Successfully"
+                        text: "Rental Car Added Successfully"
                     });
 
-                    navigate("/trip");
+                    navigate("/rentalcars");
                 },
 
                 modal: {
+
                     ondismiss: function () {
 
                         Swal.fire({
@@ -120,32 +141,40 @@ const TripForm = () => {
                         });
 
                     }
+
                 }
+
             };
+
+            console.log("Razorpay Options :", options);
 
             const razorpay = new window.Razorpay(options);
 
             razorpay.open();
 
+        }
+        catch (error) {
 
-        } catch (error) {
-            console.error(error);
+            console.error("Payment Error :", error);
+
             Swal.fire({
                 icon: "error",
-                title: "Failed",
-                text: "Unable to add trip. Please try again.",
+                title: "Payment Failed",
+                text: error?.response?.data?.message || error.message
             });
+
         }
     };
 
+
+
+
+
     return (
         <div className="max-w-3xl mx-auto mt-8">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white shadow-lg rounded-xl p-8 space-y-4"
-            >
+            <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 space-y-4">
                 <h2 className="text-3xl font-bold text-center mb-4">
-                    Add Trip Vehicle
+                    Add Rental Car
                 </h2>
 
                 <input
@@ -153,7 +182,7 @@ const TripForm = () => {
                     name="vehicleName"
                     placeholder="Vehicle Name"
                     className="input input-bordered w-full"
-                    value={trip.vehicleName}
+                    value={rentalCar.vehicleName}
                     onChange={handleChange}
                     required
                 />
@@ -163,7 +192,7 @@ const TripForm = () => {
                     name="vehicleNumber"
                     placeholder="Vehicle Number"
                     className="input input-bordered w-full"
-                    value={trip.vehicleNumber}
+                    value={rentalCar.vehicleNumber}
                     onChange={handleChange}
                     required
                 />
@@ -173,7 +202,7 @@ const TripForm = () => {
                     name="category"
                     placeholder="Category"
                     className="input input-bordered w-full"
-                    value={trip.category}
+                    value={rentalCar.category}
                     onChange={handleChange}
                     required
                 />
@@ -183,7 +212,7 @@ const TripForm = () => {
                     name="location"
                     placeholder="Location - Village , Taluka , District"
                     className="input input-bordered w-full"
-                    value={trip.location}
+                    value={rentalCar.location}
                     onChange={handleChange}
                     required
                 />
@@ -193,7 +222,7 @@ const TripForm = () => {
                     name="ownerName"
                     placeholder="Owner Name"
                     className="input input-bordered w-full"
-                    value={trip.ownerName}
+                    value={rentalCar.ownerName}
                     onChange={handleChange}
                     required
                 />
@@ -203,7 +232,7 @@ const TripForm = () => {
                     name="ownerContact"
                     placeholder="Owner Contact"
                     className="input input-bordered w-full"
-                    value={trip.ownerContact}
+                    value={rentalCar.ownerContact}
                     onChange={handleChange}
                     required
                 />
@@ -213,10 +242,10 @@ const TripForm = () => {
                     name="seatingCapacity"
                     placeholder="Seating Capacity"
                     className="input input-bordered w-full"
-                    value={trip.seatingCapacity}
+                    value={rentalCar.seatingCapacity}
                     onChange={handleChange}
                     min="1"
-                    max="100"
+                    max="10"
                     required
                 />
 
@@ -224,7 +253,7 @@ const TripForm = () => {
                     <input
                         type="checkbox"
                         name="acAvailable"
-                        checked={trip.acAvailable}
+                        checked={rentalCar.acAvailable}
                         onChange={handleChange}
                     />
                     AC Available
@@ -251,15 +280,17 @@ const TripForm = () => {
                     )}
                 </div>
 
-
-
-                {/* Payment Section */}
                 {localStorage.getItem("role") !== "Admin" && (
                     <div className="mt-8 border rounded-xl p-5 bg-gray-50 shadow">
-                        <h2 className="text-xl font-semibold mb-4">Payment</h2>
+                        <h2 className="text-xl font-semibold mb-4">
+                            Payment
+                        </h2>
 
                         <div className="mb-3">
-                            <label className="font-medium">Amount</label>
+                            <label className="font-medium">
+                                Amount
+                            </label>
+
                             <input
                                 type="text"
                                 value="₹0 (Free Launch)"
@@ -274,12 +305,13 @@ const TripForm = () => {
                             </label>
 
                             <div className="flex gap-6">
+
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="radio"
                                         name="paymentMethod"
                                         value="UPI"
-                                        checked={trip.paymentMethod === "UPI"}
+                                        checked={rentalCar.paymentMethod === "UPI"}
                                         onChange={handleChange}
                                     />
                                     UPI
@@ -290,7 +322,7 @@ const TripForm = () => {
                                         type="radio"
                                         name="paymentMethod"
                                         value="Card"
-                                        checked={trip.paymentMethod === "Card"}
+                                        checked={rentalCar.paymentMethod === "Card"}
                                         onChange={handleChange}
                                     />
                                     Card
@@ -301,26 +333,26 @@ const TripForm = () => {
                                         type="radio"
                                         name="paymentMethod"
                                         value="Net Banking"
-                                        checked={trip.paymentMethod === "Net Banking"} onChange={handleChange}
+                                        checked={rentalCar.paymentMethod === "Net Banking"}
+                                        onChange={handleChange}
                                     />
                                     Net Banking
                                 </label>
+
                             </div>
                         </div>
                     </div>
                 )}
 
-                <button
-                    type="submit"
-                    className="btn btn-primary w-full"
-                >
+                <button type="submit" className="btn btn-primary w-full">
                     {localStorage.getItem("role") === "Admin"
                         ? "Add Vehicle"
                         : "Proceed to Payment"}
                 </button>
+
             </form>
         </div>
     );
 };
 
-export default TripForm;
+export default RentalCarForm;

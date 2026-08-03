@@ -2,6 +2,9 @@ import TripForm from "../../Components/Forms/TripForm";
 import EmergencyForm from "../../Components/Forms/EmergencyForm";
 import ConstructionForm from "../../Components/Forms/ConstructionForm";
 import AgricultureForm from "../../Components/Forms/AgricultureForm";
+import HeavyLoadForm from "../../Components/Forms/HeavyLoadForm";
+import LightLoadForm from "../../Components/Forms/LightLoadForm";
+import RentalCarForm from "../../Components/Forms/RentalCarForm";
 const Dashboard = () => {
 
     return (
@@ -20,7 +23,9 @@ const Dashboard = () => {
                 <AgricultureForm />
 
                 <ConstructionForm />
-
+                <HeavyLoadForm />
+                <LightLoadForm />
+                <RentalCarForm />
 
             </div>
 

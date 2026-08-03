@@ -1,4 +1,13 @@
 import React from "react";
+import {
+  HiOutlineMapPin,
+  HiOutlineTruck,
+  HiOutlineUser,
+  HiOutlineClipboardDocument,
+  HiOutlinePencilSquare,
+  HiOutlineTrash,
+} from "react-icons/hi2";
+
 
 export default function AgricultureCard({
   agriculture,
@@ -9,60 +18,72 @@ export default function AgricultureCard({
   onCancel,
   onEdit,
   onDelete,
+  showActions = false,
 }) {
+
+
   const isEditing = editingId === agriculture.id;
-  const isAdmin = localStorage.getItem("role") === "Admin";
 
-  const imageUrl = (path) => {
-    if (!path) return "https://localhost:7041/uploads/default-trip.webp";
 
-    if (path.startsWith("http")) return path;
+  const copyNumber = async (number) => {
 
-    return `https://localhost:7041${path}`;
+    try {
+
+      await navigator.clipboard.writeText(number);
+
+      alert("📋 Phone number copied successfully!");
+
+    }
+    catch (err) {
+
+      alert("❌ Failed to copy phone number.");
+
+    }
+
   };
 
+
+
   return (
-    <div className="card bg-base-100 border border-gray-300 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+
+    <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl hover:-translate-y-2 duration-300">
+
 
       {/* Image */}
+
       <figure>
+
         <img
-          src={imageUrl(
-            isEditing ? editedAgriculture.imagePath : agriculture.imagePath
-          )}
+          src={`https://localhost:7041${isEditing
+            ? editedAgriculture.imagePath
+            : agriculture.imagePath}`}
           alt={agriculture.vehicleName}
-          className="h-56 w-full object-cover"
+          className="h-60 w-full object-cover"
           onError={(e) => {
-            e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+            e.target.src =
+              "https://localhost:7041/uploads/default-agriculture.webp";
           }}
         />
+
       </figure>
 
-      <div className="card-body">
+
+
+      <div className="card-body p-6">
+
+
 
         {/* ================= EDIT MODE ================= */}
 
         {isEditing ? (
+
           <>
-            <label className="font-semibold">User Name</label>
-            <input
-              type="text"
-              name="userName"
-              value={editedAgriculture.userName}
-              onChange={onChange}
-              className="input input-bordered w-full"
-            />
 
-            <label className="font-semibold mt-2">Contact Number</label>
-            <input
-              type="text"
-              name="contactNumber"
-              value={editedAgriculture.contactNumber}
-              onChange={onChange}
-              className="input input-bordered w-full"
-            />
 
-            <label className="font-semibold mt-2">Vehicle Name</label>
+            <label className="font-semibold">
+              Vehicle Name
+            </label>
+
             <input
               type="text"
               name="vehicleName"
@@ -71,7 +92,12 @@ export default function AgricultureCard({
               className="input input-bordered w-full"
             />
 
-            <label className="font-semibold mt-2">Vehicle Number</label>
+
+
+            <label className="font-semibold mt-2">
+              Vehicle Number
+            </label>
+
             <input
               type="text"
               name="vehicleNumber"
@@ -80,16 +106,26 @@ export default function AgricultureCard({
               className="input input-bordered w-full"
             />
 
-            <label className="font-semibold mt-2">Work Type</label>
+
+
+            <label className="font-semibold mt-2">
+              Category
+            </label>
+
             <input
               type="text"
-              name="workType"
-              value={editedAgriculture.workType}
+              name="category"
+              value={editedAgriculture.category}
               onChange={onChange}
               className="input input-bordered w-full"
             />
 
-            <label className="font-semibold mt-2">Location</label>
+
+
+            <label className="font-semibold mt-2">
+              Location
+            </label>
+
             <input
               type="text"
               name="location"
@@ -98,29 +134,53 @@ export default function AgricultureCard({
               className="input input-bordered w-full"
             />
 
-            <label className="font-semibold mt-2">Description</label>
+
+
+            <label className="font-semibold mt-2">
+              Owner Name
+            </label>
+
+            <input
+              type="text"
+              name="ownerName"
+              value={editedAgriculture.ownerName}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+
+
+            <label className="font-semibold mt-2">
+              Owner Contact
+            </label>
+
+            <input
+              type="text"
+              name="ownerContact"
+              value={editedAgriculture.ownerContact}
+              onChange={onChange}
+              className="input input-bordered w-full"
+            />
+
+
+
+            <label className="font-semibold mt-2">
+              Specifications
+            </label>
+
             <textarea
-              name="description"
-              value={editedAgriculture.description}
+              name="specifications"
+              value={editedAgriculture.specifications}
               onChange={onChange}
               className="textarea textarea-bordered w-full"
             />
 
-            <label className="font-semibold mt-2">Status</label>
-            <select
-              name="status"
-              value={editedAgriculture.status}
-              onChange={onChange}
-              className="select select-bordered w-full"
-            >
-              <option>Available</option>
-              <option>Busy</option>
-              <option>Maintenance</option>
-            </select>
+
 
             <label className="font-semibold mt-2">
               Vehicle Image
             </label>
+
 
             <input
               type="file"
@@ -129,11 +189,16 @@ export default function AgricultureCard({
               disabled
             />
 
+
             <p className="text-xs text-gray-500 mt-1">
               Image update will be enabled in the next step.
             </p>
 
+
+
+
             <div className="card-actions justify-end mt-6">
+
 
               <button
                 className="btn btn-success"
@@ -142,6 +207,7 @@ export default function AgricultureCard({
                 Save
               </button>
 
+
               <button
                 className="btn btn-outline"
                 onClick={onCancel}
@@ -149,88 +215,163 @@ export default function AgricultureCard({
                 Cancel
               </button>
 
+
             </div>
+
+
           </>
+
+
+
         ) : (
+
+
           <>
+
             {/* ================= VIEW MODE ================= */}
 
+
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-success">
+
+
+              <h2 className="text-xl font-bold text-gray-900 tracking-tight">
                 {agriculture.vehicleName}
               </h2>
 
-              <div className="badge badge-success badge-lg">
-                🚜 Agriculture
-              </div>
+
+              <span className="px-3 py-1 rounded-full bg-green-50 text-black border border-green-100 text-sm font-semibold">
+                {agriculture.category}
+              </span>
+
+
             </div>
 
-            <div className="badge badge-outline mt-2">
-              {agriculture.status}
-            </div>
 
-            <div className="space-y-3 mt-4 text-[16px]">
 
-              <p>
-                👤 <span className="font-semibold">User :</span>{" "}
-                {agriculture.userName}
-              </p>
+            <div className="space-y-2 mt-5">
 
-              <p>
-                📞 <span className="font-semibold">Contact :</span>{" "}
-                {agriculture.contactNumber}
-              </p>
 
-              <p>
-                🚜 <span className="font-semibold">Vehicle :</span>{" "}
-                {agriculture.vehicleName}
-              </p>
-
-              <p>
-                🔢 <span className="font-semibold">Number :</span>{" "}
-                {agriculture.vehicleNumber}
-              </p>
-
-              <p>
-                🌾 <span className="font-semibold">Work :</span>{" "}
-                {agriculture.workType}
-              </p>
-
-              <p>
-                📍 <span className="font-semibold">Location :</span>{" "}
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineMapPin className="w-5 h-5 text-gray-400" />
                 {agriculture.location}
               </p>
 
-              <p>
-                📝 <span className="font-semibold">Description :</span>{" "}
-                {agriculture.description}
+
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineTruck className="w-5 h-5 text-gray-400" />
+                {agriculture.vehicleNumber}
               </p>
+
+
+
+              <p className="flex items-center gap-2 text-gray-600">
+                <HiOutlineUser className="w-5 h-5 text-gray-400" />
+                {agriculture.ownerName}
+              </p>
+
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Specifications
+                </p>
+
+                <p className="text-gray-800 font-medium">
+                  {agriculture.specifications}
+                </p>
+
+              </div>
+
+
+
+              <div className="bg-gray-100 rounded-xl p-3 mt-4">
+
+                <p className="text-sm text-gray-500">
+                  Owner Contact
+                </p>
+
+                <p className="text-lg font-bold text-gray-800">
+                  {agriculture.ownerContact}
+                </p>
+
+              </div>
+
 
             </div>
 
-            {isAdmin && (
+
+
+
+            <button
+              onClick={() => copyNumber(agriculture.ownerContact)}
+              className="w-full flex items-center justify-center gap-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl font-semibold py-3 transition-all duration-300"
+            >
+
+              <HiOutlineClipboardDocument className="w-5 h-5" />
+
+              <span>
+                Copy Number
+              </span>
+
+            </button>
+
+
+
+
+            {showActions && (
+
               <div className="flex justify-between mt-6">
 
+
                 <button
-                  className="btn btn-warning w-[48%]"
+                  className="w-[48%] flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium py-3 transition-all duration-300"
                   onClick={() => onEdit(agriculture)}
                 >
-                  ✏️ Update
+
+                  <HiOutlinePencilSquare className="w-5 h-5" />
+
+                  <span>
+                    Update
+                  </span>
+
                 </button>
+
+
+
 
                 <button
-                  className="btn btn-error w-[48%]"
+                  className="w-[48%] flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-xl font-medium py-3 transition-all duration-300"
                   onClick={() => onDelete(agriculture.id)}
                 >
-                  🗑 Delete
+
+                  <HiOutlineTrash className="w-5 h-5" />
+
+                  <span>
+                    Delete
+                  </span>
+
                 </button>
 
+
               </div>
+
             )}
+
+
+
           </>
+
         )}
 
+
+
       </div>
+
+
     </div>
+
   );
+
 }

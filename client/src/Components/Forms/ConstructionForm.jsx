@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addConstruction } from "../../Services/ConstructionService";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const ConstructionForm = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const ConstructionForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    const role = localStorage.getItem("role");
     e.preventDefault();
 
     try {
@@ -51,36 +53,87 @@ const ConstructionForm = () => {
       }
 
       formData.append("paymentMethod", construction.paymentMethod);
-      formData.append("paymentStatus", "Success");
+      formData.append("paymentStatus", "Pending");
 
-      const transactionId = "DRVHUB-" + Date.now();
-      formData.append("transactionId", transactionId);
+      if (role === "Admin") {
 
-      Swal.fire({
-        title: "Processing Payment...",
-        text: "Please wait",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
+        formData.set("paymentMethod", "Admin");
+        formData.set("paymentStatus", "Success");
+        formData.set("transactionId", "ADMIN-" + Date.now());
+
+        await addConstruction(formData);
+
+        Swal.fire({
+          icon: "success",
+          title: "Vehicle Added Successfully"
+        });
+
+        navigate("/construction");
+        return;
+      }
+
+      const { data } = await axios.post(
+        "https://localhost:7041/api/Payment/create-order",
+        {
+          amount: 99
+        }
+      );
+
+      const options = {
+
+        key: data.key,
+
+        amount: data.amount,
+
+        currency: data.currency,
+
+        name: "DriveHub",
+
+        description: "Construction Vehicle Payment",
+
+        order_id: data.orderId,
+
+        handler: async function (response) {
+
+          formData.set(
+            "transactionId",
+            response.razorpay_payment_id
+          );
+
+          formData.set(
+            "paymentStatus",
+            "Success"
+          );
+
+          await addConstruction(formData);
+
+          Swal.fire({
+            icon: "success",
+            title: "Payment Successful",
+            text: "Vehicle Added Successfully"
+          });
+
+          navigate("/construction");
         },
-      });
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+        modal: {
 
-      await addConstruction(formData);
+          ondismiss: function () {
 
-      await Swal.fire({
-        icon: "success",
-        title: "Payment Successful",
-        html: `
-          <b>Amount:</b> ₹0 (Free Launch)<br><br>
-          <b>Transaction ID:</b><br>${transactionId}<br><br>
-          <b>Your vehicle has been added successfully.</b>
-        `,
-        confirmButtonText: "Continue",
-      });
+            Swal.fire({
+              icon: "warning",
+              title: "Payment Cancelled"
+            });
 
-      navigate("/construction");
+          }
+
+        }
+
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.open();
     } catch (error) {
       console.error(error);
       Swal.fire({
@@ -204,65 +257,70 @@ const ConstructionForm = () => {
         </div>
 
         {/* Payment Section */}
-        <div className="mt-8 border rounded-xl p-5 bg-gray-50 shadow">
-          <h2 className="text-xl font-semibold mb-4">Payment</h2>
+        {localStorage.getItem("role") !== "Admin" && (
 
-          <div className="mb-3">
-            <label className="font-medium">Amount</label>
-            <input
-              type="text"
-              value="₹0 (Free Launch)"
-              readOnly
-              className="w-full border rounded-lg p-2 mt-1 bg-gray-100"
-            />
-          </div>
+          <div className="mt-8 border rounded-xl p-5 bg-gray-50 shadow">
+            <h2 className="text-xl font-semibold mb-4">Payment</h2>
 
-          <div className="mb-4">
-            <label className="font-medium block mb-2">
-              Select Payment Method
-            </label>
+            <div className="mb-3">
+              <label className="font-medium">Amount</label>
+              <input
+                type="text"
+                value="₹0 (Free Launch)"
+                readOnly
+                className="w-full border rounded-lg p-2 mt-1 bg-gray-100"
+              />
+            </div>
 
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="UPI"
-                  checked={construction.paymentMethod === "UPI"}
-                  onChange={handleChange}
-                />
-                UPI
+            <div className="mb-4">
+              <label className="font-medium block mb-2">
+                Select Payment Method
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="Card"
-                  checked={construction.paymentMethod === "Card"}
-                  onChange={handleChange}
-                />
-                Card
-              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="UPI"
+                    checked={construction.paymentMethod === "UPI"}
+                    onChange={handleChange}
+                  />
+                  UPI
+                </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="Net Banking"
-                  checked={construction.paymentMethod === "Net Banking"} onChange={handleChange}
-                />
-                Net Banking
-              </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Card"
+                    checked={construction.paymentMethod === "Card"}
+                    onChange={handleChange}
+                  />
+                  Card
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="Net Banking"
+                    checked={construction.paymentMethod === "Net Banking"} onChange={handleChange}
+                  />
+                  Net Banking
+                </label>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <button
           type="submit"
           className="btn btn-primary w-full text-lg"
         >
-          Proceed to Payment
+          {localStorage.getItem("role") === "Admin"
+            ? "Add Vehicle"
+            : "Proceed to Payment"}
         </button>
       </form>
     </div>

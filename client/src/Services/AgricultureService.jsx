@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = "https://localhost:7041/api/Agriculture";
 
-export const getAgriculture = async () => {
+export const getAgricultureVehicles = async () => {
     return await axios.get(API);
 };
 
@@ -29,3 +29,6 @@ export const deleteAgriculture = async (id) => {
 export const getAgricultureById = async (id) => {
     return await axios.get(`${API}/${id}`);
 };
+
+export const getUserAgriculture = (userId) =>
+    axios.get(`${API}/user/${userId}`);
