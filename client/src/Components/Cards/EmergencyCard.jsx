@@ -23,11 +23,9 @@ export default function EmergencyCard({
   const isEditing = editingId === emergency.id;
 
   const imageUrl = (path) => {
-    if (!path) return "https://via.placeholder.com/400x250";
+    if (!path) return "/default-emergency.webp";
 
-    if (path.startsWith("http")) return path;
-
-    return `https://localhost:7041${path}`;
+    return path;
   };
 
   const copyNumber = async (number) => {
@@ -54,8 +52,9 @@ export default function EmergencyCard({
             isEditing ? editedEmergency.imagePath : emergency.imagePath
           )}
           alt={emergency.vehicleName}
-          className="h-60 w-full object-cover" onError={(e) => {
-            e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+          className="h-60 w-full object-cover"
+          onError={(e) => {
+            e.target.src = "/default-emergency.webp";
           }}
         />
       </figure>

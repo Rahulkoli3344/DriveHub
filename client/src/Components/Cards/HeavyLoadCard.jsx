@@ -22,6 +22,12 @@ export default function HeavyLoadCard({
 
   const isEditing = editingId === heavyLoad.id;
 
+  const imageUrl = (path) => {
+    if (!path) return "/default-heavyload.webp";
+
+    return path;
+  };
+
   const copyNumber = async (number) => {
     try {
       await navigator.clipboard.writeText(number);
@@ -36,11 +42,15 @@ export default function HeavyLoadCard({
 
       <figure>
         <img
-          src={`https://localhost:7041${isEditing ? editedHeavyLoad.imagePath : heavyLoad.imagePath}`}
+          src={imageUrl(
+            isEditing
+              ? editedHeavyLoad.imagePath
+              : heavyLoad.imagePath
+          )}
           alt={heavyLoad.vehicleName}
           className="h-60 w-full object-cover"
           onError={(e) => {
-            e.target.src = "https://localhost:7041/uploads/default-heavyload.webp";
+            e.target.src = "/default-heavyload.webp";
           }}
         />
       </figure>

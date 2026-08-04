@@ -22,6 +22,12 @@ export default function LightLoadCard({
 
   const isEditing = editingId === lightLoad.id;
 
+  const imageUrl = (path) => {
+    if (!path) return "/default-lightload.webp";
+
+    return path;
+  };
+
   const copyNumber = async (number) => {
     try {
       await navigator.clipboard.writeText(number);
@@ -36,11 +42,15 @@ export default function LightLoadCard({
 
       <figure>
         <img
-          src={`https://localhost:7041${isEditing ? editedLightLoad.imagePath : lightLoad.imagePath}`}
+          src={imageUrl(
+            isEditing
+              ? editedLightLoad.imagePath
+              : lightLoad.imagePath
+          )}
           alt={lightLoad.vehicleName}
           className="h-60 w-full object-cover"
           onError={(e) => {
-            e.target.src = "https://localhost:7041/uploads/default-lightload.webp";
+            e.target.src = "/default-lightload.webp";
           }}
         />
       </figure>

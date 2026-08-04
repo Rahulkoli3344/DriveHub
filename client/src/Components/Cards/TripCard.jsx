@@ -36,10 +36,15 @@ export default function TripCard({
             {/* Image */}
             <figure>
                 <img
-                    src={`https://localhost:7041${isEditing ? editedTrip.imagePath : trip.imagePath}`}
+                    src={
+                        isEditing
+                            ? editedTrip.imagePath
+                            : trip.imagePath || "/default-trip.webp"
+                    }
                     alt={trip.vehicleName}
-                    className="h-60 w-full object-cover" onError={(e) => {
-                        e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+                    className="h-60 w-full object-cover"
+                    onError={(e) => {
+                        e.target.src = "/default-trip.webp";
                     }}
                 />
             </figure>

@@ -23,6 +23,12 @@ export default function RentalCarCard({
 
     const isEditing = editingId === rentalCar.id;
 
+    const imageUrl = (path) => {
+        if (!path) return "/default-rentalcar.webp";
+
+        return path;
+    };
+
     const copyNumber = async (number) => {
         try {
             await navigator.clipboard.writeText(number);
@@ -37,11 +43,15 @@ export default function RentalCarCard({
 
             <figure>
                 <img
-                    src={`https://localhost:7041${isEditing ? editedRentalCar.imagePath : rentalCar.imagePath}`}
+                    src={imageUrl(
+                        isEditing
+                            ? editedRentalCar.imagePath
+                            : rentalCar.imagePath
+                    )}
                     alt={rentalCar.vehicleName}
                     className="h-60 w-full object-cover"
                     onError={(e) => {
-                        e.target.src = "https://localhost:7041/uploads/default-rentalcar.webp";
+                        e.target.src = "/default-rentalcar.webp";
                     }}
                 />
             </figure>

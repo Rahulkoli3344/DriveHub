@@ -24,6 +24,12 @@ export default function AgricultureCard({
 
   const isEditing = editingId === agriculture.id;
 
+  const imageUrl = (path) => {
+    if (!path) return "/default-agriculture.webp";
+
+    return path;
+  };
+
 
   const copyNumber = async (number) => {
 
@@ -54,14 +60,15 @@ export default function AgricultureCard({
       <figure>
 
         <img
-          src={`https://localhost:7041${isEditing
-            ? editedAgriculture.imagePath
-            : agriculture.imagePath}`}
+          src={imageUrl(
+            isEditing
+              ? editedAgriculture.imagePath
+              : agriculture.imagePath
+          )}
           alt={agriculture.vehicleName}
           className="h-60 w-full object-cover"
           onError={(e) => {
-            e.target.src =
-              "https://localhost:7041/uploads/default-agriculture.webp";
+            e.target.src = "/default-agriculture.webp";
           }}
         />
 

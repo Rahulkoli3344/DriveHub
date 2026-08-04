@@ -23,11 +23,9 @@ export default function ConstructionCard({
   const isEditing = editingId === construction.id;
 
   const imageUrl = (path) => {
-    if (!path) return "https://localhost:7041/uploads/default-trip.webp";
+    if (!path) return "/default-construction.webp";
 
-    if (path.startsWith("http")) return path;
-
-    return `https://localhost:7041${path}`;
+    return path;
   };
 
   const copyNumber = async (number) => {
@@ -50,8 +48,10 @@ export default function ConstructionCard({
               : construction.imagePath
           )}
           alt={construction.vehicleName}
-          className="h-60 w-full object-cover" onError={(e) => {
-            e.target.src = "https://localhost:7041/uploads/default-trip.webp";
+          className="h-60 w-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/default-construction.webp";
           }}
         />
       </figure>
