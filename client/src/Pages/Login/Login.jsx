@@ -3,10 +3,16 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import LoginPage from '../../assets/HomeImages/LoginPage.png';
+import { auth } from "../../firebase";
+import {
+  GoogleAuthProvider,
+  signInWithPopup
+} from "firebase/auth";
 
 export default function Login() {
 
   const navigate = useNavigate();
+  const provider = new GoogleAuthProvider();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -14,35 +20,68 @@ export default function Login() {
   });
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const res = await axios.post(
-      "https://localhost:7041/api/Users/login",
-      formData
-    );
+    try {
+      const res = await axios.post(
+        "https://localhost:7041/api/Users/login",
+        formData
+      );
 
-    localStorage.setItem("userId", res.data.userId);
-    localStorage.setItem("name", res.data.name);
-    localStorage.setItem("email", res.data.email);
-    localStorage.setItem("role", res.data.role);
+      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("email", res.data.email);
+      localStorage.setItem("role", res.data.role);
 
-    // Notify Navbar
-    window.dispatchEvent(new Event("login"));
-    
-    alert("Login successful 🚀");
-    navigate("/");
+      // Notify Navbar
+      window.dispatchEvent(new Event("login"));
 
-  } catch (error) {
-    console.log(error.response?.data || error.message);
+      alert("Login successful 🚀");
+      navigate("/");
 
-    alert(
-      error.response?.data?.message ||
-      error.response?.data ||
-      error.message
-    );
-  }
-};
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+
+      alert(
+        error.response?.data?.message ||
+        error.response?.data ||
+        error.message
+      );
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      const res = await axios.post(
+        "https://localhost:7041/api/Users/google-login",
+        {
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+        }
+      );
+
+      localStorage.setItem("userId", res.data.userId);
+      localStorage.setItem("name", res.data.name);
+      localStorage.setItem("email", res.data.email);
+      localStorage.setItem("role", res.data.role);
+
+      window.dispatchEvent(new Event("login"));
+
+      alert("Google Login Successful 🚀");
+
+      navigate("/");
+    } catch (error) {
+      console.log("Error Code:", error.code);
+      console.log("Error Message:", error.message);
+      console.log(error);
+
+      alert(error.code + "\n" + error.message);
+    }
+  };
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
@@ -138,6 +177,7 @@ export default function Login() {
 
           {/* Google Login */}
           <button
+            onClick={handleGoogleLogin}
             className="w-full border border-slate-300 py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-slate-50"
           >
             <FcGoogle size={22} />

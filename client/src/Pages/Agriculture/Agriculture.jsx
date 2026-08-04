@@ -279,6 +279,11 @@ export default function Agriculture({
 
       );
 
+      formData.append("userId", editedAgriculture.userId);
+      formData.append("paymentMethod", editedAgriculture.paymentMethod);
+      formData.append("paymentStatus", editedAgriculture.paymentStatus);
+      formData.append("transactionId", editedAgriculture.transactionId);
+
 
 
 

@@ -98,6 +98,10 @@ export default function HeavyLoad({
       formData.append("ownerContact", editedHeavyLoad.ownerContact);
       formData.append("loadCapacity", editedHeavyLoad.loadCapacity);
       formData.append("description", editedHeavyLoad.description);
+      formData.append("userId", editedHeavyLoad.userId);
+      formData.append("paymentMethod", editedHeavyLoad.paymentMethod);
+      formData.append("paymentStatus", editedHeavyLoad.paymentStatus);
+      formData.append("transactionId", editedHeavyLoad.transactionId);
 
       await axios.put(
         `https://localhost:7041/api/HeavyLoad/${editingId}`,
@@ -115,7 +119,9 @@ export default function HeavyLoad({
       alert("Heavy Load Updated Successfully");
 
     } catch (error) {
-      console.error(error);
+      console.log("Status:", error.response?.status);
+      console.log("Errors:", error.response?.data?.errors);
+
       alert("Update Failed");
     }
   };
