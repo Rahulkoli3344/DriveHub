@@ -1,6 +1,10 @@
 import Trip from "../../Pages/Trip/Trip";
 import Emergency from "../../Pages/Emergency/Emergency";
 import Construction from "../../Pages/Construction/Construction";
+import Agriculture from "../../Pages/Agriculture/Agriculture";
+import HeavyLoad from "../../Pages/HeavyLoad/HeavyLoad";
+import LightLoad from "../../Pages/LightLoad/LightLoad";
+import RentalCars from "../../Pages/RentalCars/RentalCars";
 
 export default function YourVehicles() {
   return (
@@ -23,6 +27,30 @@ export default function YourVehicles() {
       />
 
       <Construction
+        onlyCurrentUser={true}
+        showHeading={false}
+        showSearch={false}
+      />
+
+      <Agriculture
+        onlyCurrentUser={true}
+        showHeading={false}
+        showSearch={false}
+      />
+
+      <HeavyLoad
+        onlyCurrentUser={true}
+        showHeading={false}
+        showSearch={false}
+      />
+
+      <LightLoad
+        onlyCurrentUser={true}
+        showHeading={false}
+        showSearch={false}
+      />
+
+      <RentalCars
         onlyCurrentUser={true}
         showHeading={false}
         showSearch={false}
