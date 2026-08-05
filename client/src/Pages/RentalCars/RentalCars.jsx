@@ -114,6 +114,10 @@ export default function RentalCars({
       // formData.append("description", editedRentalCar.description);
       formData.append("seatingCapacity", editedRentalCar.seatingCapacity);
       formData.append("acAvailable", editedRentalCar.acAvailable);
+      formData.append("userId", editedRentalCar.userId);
+      formData.append("paymentMethod", editedRentalCar.paymentMethod);
+      formData.append("paymentStatus", editedRentalCar.paymentStatus);
+      formData.append("transactionId", editedRentalCar.transactionId);
 
 
       await axios.put(

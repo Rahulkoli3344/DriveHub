@@ -113,6 +113,10 @@ export default function LightLoad({
       formData.append("ownerContact", editedLightLoad.ownerContact);
       formData.append("loadCapacity", editedLightLoad.loadCapacity);
       formData.append("description", editedLightLoad.description);
+      formData.append("userId", editedLightLoad.userId);
+      formData.append("paymentMethod", editedLightLoad.paymentMethod);
+      formData.append("paymentStatus", editedLightLoad.paymentStatus);
+      formData.append("transactionId", editedLightLoad.transactionId);
 
 
       await axios.put(

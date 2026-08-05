@@ -5,7 +5,7 @@ import TripCard from "../../Components/Cards/TripCard";
 export default function Trip({
   onlyCurrentUser = false,
   showHeading = true,
-  showSearch=true,
+  showSearch = true,
 }) {
   const [trips, setTrips] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -100,6 +100,10 @@ export default function Trip({
       formData.append("ownerContact", editedTrip.ownerContact);
       formData.append("seatingCapacity", editedTrip.seatingCapacity);
       formData.append("acAvailable", editedTrip.acAvailable);
+      formData.append("userId", editedTrip.userId);
+      formData.append("paymentMethod", editedTrip.paymentMethod);
+      formData.append("paymentStatus", editedTrip.paymentStatus);
+      formData.append("transactionId", editedTrip.transactionId);
 
       await axios.put(
         `https://localhost:7041/api/Trips/${editingId}`,
@@ -137,15 +141,15 @@ export default function Trip({
       )}
 
       {showSearch && (
-      <div className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="🔍 Search by Vehicle Name or Location..."
-          className="input input-bordered w-full max-w-lg"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+        <div className="flex justify-center mb-6">
+          <input
+            type="text"
+            placeholder="🔍 Search by Vehicle Name or Location..."
+            className="input input-bordered w-full max-w-lg"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

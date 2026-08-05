@@ -104,7 +104,11 @@ const ChatBot = () => {
                                             >
 
                                                 <img
-                                                    src={`https://localhost:7041${item.imagePath}`}
+                                                    src={
+                                                        item.imagePath?.startsWith("http")
+                                                            ? item.imagePath
+                                                            : `https://localhost:7041${item.imagePath}`
+                                                    }
                                                     alt={item.vehicleName}
                                                     className="w-full h-40 object-cover rounded"
                                                 />

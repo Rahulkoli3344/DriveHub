@@ -5,7 +5,7 @@ import EmergencyCard from "../../Components/Cards/EmergencyCard";
 export default function Emergency({
   onlyCurrentUser = false,
   showHeading = true,
-  showSearch=true,
+  showSearch = true,
 
 }) {
 
@@ -112,6 +112,11 @@ export default function Emergency({
       formData.append("driverContact", editedEmergency.driverContact);
       formData.append("location", editedEmergency.location);
       formData.append("availability", editedEmergency.availability);
+      formData.append("userId", editedEmergency.userId);
+      formData.append("paymentMethod", editedEmergency.paymentMethod);
+      formData.append("paymentStatus", editedEmergency.paymentStatus);
+      formData.append("transactionId", editedEmergency.transactionId);
+
 
       if (editedEmergency.image instanceof File) {
         formData.append("image", editedEmergency.image);
@@ -160,15 +165,15 @@ export default function Emergency({
       )}
 
       {showSearch && (
-      <div className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="🔍 Search by Vehicle Name or Location..."
-          className="input input-bordered w-full max-w-lg"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+        <div className="flex justify-center mb-6">
+          <input
+            type="text"
+            placeholder="🔍 Search by Vehicle Name or Location..."
+            className="input input-bordered w-full max-w-lg"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

@@ -5,7 +5,7 @@ import ConstructionCard from "../../Components/Cards/ConstructionCard";
 export default function Construction({
   onlyCurrentUser = false,
   showHeading = true,
-  showSearch=true,
+  showSearch = true,
 
 }) {
   const [construction, setConstruction] = useState([]);
@@ -98,6 +98,11 @@ export default function Construction({
       formData.append("location", editedConstruction.location);
       formData.append("description", editedConstruction.description);
       formData.append("status", editedConstruction.status);
+      formData.append("userId", editedConstruction.userId);
+      formData.append("paymentMethod", editedConstruction.paymentMethod);
+      formData.append("paymentStatus", editedConstruction.paymentStatus);
+      formData.append("transactionId", editedConstruction.transactionId);
+
 
       await axios.put(
         `https://localhost:7041/api/Construction/${editingId}`,
@@ -135,15 +140,15 @@ export default function Construction({
       )}
 
       {showSearch && (
-      <div className="flex justify-center mb-6">
-        <input
-          type="text"
-          placeholder="🔍 Search by Vehicle Name or Location..."
-          className="input input-bordered w-full max-w-lg"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+        <div className="flex justify-center mb-6">
+          <input
+            type="text"
+            placeholder="🔍 Search by Vehicle Name or Location..."
+            className="input input-bordered w-full max-w-lg"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
